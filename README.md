@@ -1,4 +1,12 @@
-#My Personal Site
+My Personal Site
 ======
 
-+ base on flask
++ Base on flask
++ Register account and log in
++ Email confirmation
++ Account permissions management
++ Post with Markdown
++ Comment on Post
++ Comment management
++ Account profile detail
++ Profile editable
