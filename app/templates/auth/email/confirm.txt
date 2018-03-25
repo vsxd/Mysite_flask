@@ -1,13 +1,13 @@
-Dear {{ user.username }},
+亲爱的 {{ user.username }}：
 
-Welcome to Flasky!
+欢迎访问 Xudong - 个人站
 
-To confirm your account please click on the following link:
+为了确认您的账户，请点击下面的链接：
 
 {{ url_for('auth.confirm', token=token, _external=True) }}
 
-Sincerely,
+谢谢配合
 
-The Flasky Team
+Xudong - 个人站
 
-Note: replies to this email address are not monitored.
+Note: 回复此邮件将不会得到任何回复
