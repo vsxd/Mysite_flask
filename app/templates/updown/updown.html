@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Xudong - Up&Down{% endblock %}
+
+{% block page_content %}
+{% if current_user.can(Permission.ADMIN) %}
+    <h4>您拥有上传文件的权限，但请善用权限，不要上传无用文件。</h4>
+<div class="comment-form">
+    {{ wtf.quick_form(upform) }}
+</div>
+{% endif %}
+
+
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, 'xxx', fragment='xxx', id=posts[0].id) }}
+</div>
+{% endif %}
+{% endblock %}

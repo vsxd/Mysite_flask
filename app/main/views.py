@@ -262,7 +262,7 @@ def moderate_enable(id):
     comment.disabled = False
     db.session.add(comment)
     db.session.commit()
-    return redirect(url_for('.moderate',
+    return redirect(url_for('.derate',
                             page=request.args.get('page', 1, type=int)))
 
 

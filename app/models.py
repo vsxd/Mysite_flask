@@ -18,6 +18,19 @@ class Permission:
     ADMIN = 16
 
 
+class Updown(db.Model):
+    __tablename__ = 'updown'
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(64))
+    extension = db.Column(db.String(8))
+    uploader = db.Column(db.Integer, db.ForeignKey('users.id'))
+    note = db.Column(db.String(128))
+
+    @staticmethod
+    def filename_hash(filename):
+        return hashlib.md5(filename.lower().encode('utf-8')).hexdigest()
+
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
