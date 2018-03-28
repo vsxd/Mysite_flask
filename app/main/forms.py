@@ -8,28 +8,29 @@ from ..models import Role, User
 
 
 class NameForm(FlaskForm):
-    name = StringField('你的名字是？', validators=[DataRequired()])
+    name = StringField('你的名字是？', validators=[DataRequired(message='名字不能为空')])
     submit = SubmitField('确认')
 
 
 class EditProfileForm(FlaskForm):
-    name = StringField('真实姓名', validators=[Length(0, 64)])
-    location = StringField('位置', validators=[Length(0, 64)])
+    name = StringField('真实姓名', validators=[Length(0, 64, message='字数只能在0-64')])
+    location = StringField('位置', validators=[Length(0, 64, message='字数只能在0-64')])
     about_me = TextAreaField('关于我')
     submit = SubmitField('确认')
 
 
 class EditProfileAdminForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
-                                             Email()])
+    email = StringField('Email', validators=[DataRequired(message='Email不能为空'),
+                                             Length(6, 64, message='字数只能在0-64'),
+                                             Email(message='请使用邮箱')])
     username = StringField('昵称', validators=[
-        DataRequired(), Length(1, 64),
+        DataRequired(message='昵称不能为空'), Length(3, 64, message='字数只能在3-64'),
         Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                '昵称只能包含 字母, 数字, 点 或者 下划线')])
     confirmed = BooleanField('确认')
     role = SelectField('角色', coerce=int)
-    name = StringField('真实姓名', validators=[Length(0, 64)])
-    location = StringField('位置', validators=[Length(0, 64)])
+    name = StringField('真实姓名', validators=[Length(0, 64, message='字数只能在0-64')])
+    location = StringField('位置', validators=[Length(0, 64, message='字数只能在0-64')])
     about_me = TextAreaField('关于我')
     submit = SubmitField('确认')
 
@@ -51,10 +52,10 @@ class EditProfileAdminForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    body = PageDownField('想写些什么？', validators=[DataRequired()])
+    body = PageDownField('想写些什么？', validators=[DataRequired(message='Post不能为空')])
     submit = SubmitField('Post!')
 
 
 class CommentForm(FlaskForm):
-    body = StringField('输入您的评论', validators=[DataRequired()])
+    body = StringField('输入您的评论', validators=[DataRequired(message='评论不能为空')])
     submit = SubmitField('Comment！')

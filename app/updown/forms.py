@@ -14,3 +14,6 @@ class UploadForm(FlaskForm):
                                               message='请认真填写文件说明，但不能超过64个字符')])
     hashname = BooleanField('上传时随机文件名（选择此项后请认真填写文件说明）')
     submit = SubmitField('确认上传')
+
+    def validate_file(self, field):
+        pass

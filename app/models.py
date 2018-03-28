@@ -23,6 +23,7 @@ class Updown(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(64))
     extension = db.Column(db.String(8))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     uploader = db.Column(db.Integer, db.ForeignKey('users.id'))
     note = db.Column(db.String(128))
 

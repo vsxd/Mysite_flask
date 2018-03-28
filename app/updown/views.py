@@ -9,10 +9,10 @@ from werkzeug.utils import secure_filename
 
 
 @updown.route('/', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def updown():
     form = UploadForm()
-    files = Updown.query
+
     if form.validate_on_submit():
         if not request.files['file']:
             flash('上传失败 请重试')
@@ -31,9 +31,11 @@ def updown():
         file.save('updown/' + file.filename)
         flash('上传成功')
         return redirect(url_for('.updown'))
-
+    query = Updown.query
     # 显示服务器上的文件
-    pagination = files.paginate(1, per_page=20)
+    pagination = query.paginate(per_page=20)
+    files = pagination.items
     return render_template('updown/updown.html',
                            upform=form,
+                           files=files,
                            pagination=pagination)
