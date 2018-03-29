@@ -39,7 +39,7 @@ def updown():
                         note=form.note.data)
         db.session.add(upload)
         db.session.commit()
-        file.save('updown/download/' + file.filename)
+        file.save('static/download/' + file.filename)
         flash('上传成功', category='message')
         return redirect(url_for('.updown'))
     query = Updown.query
