@@ -16,45 +16,44 @@
     {% endif %}
 </div>
 
-<ul class="files">
-    {% for file in files %}
-    <li class="file">
-{#        <div class="post-thumbnail">#}
-{#            <a href="{{ url_for('.user', username=post.author.username) }}">#}
-{#                <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">#}
-{#            </a>#}
-{#        </div>#}
-        <div class="file-content">
-            <div class="file-name">{{ file.filename }}</div>
-            <div class="file-timestamp">{{ file.timestamp }}</div>
-            <div class="file-uploader"><a href="{{ url_for('main.user', username='God') }}">{{ file.uploader }}</a></div>
-            <div class="file-note">
-                {% if file.note %}
-                    {{ file.note}}
-                {% endif %}
-            </div>
-            <div class="file-extension">{{ file.extension }}</div>
-{#            <div class="post-footer">#}
-{#                {% if current_user == post.author %}#}
-{#                <a href="{{ url_for('.edit', id=post.id) }}">#}
-{#                    <span class="label label-primary">编辑</span>#}
-{#                </a>#}
-{#                {% elif current_user.is_administrator() %}#}
-{#                <a href="{{ url_for('.edit', id=post.id) }}">#}
-{#                    <span class="label label-danger">编辑 [Admin]</span>#}
-{#                </a>#}
-{#                {% endif %}#}
-{#                <a href="{{ url_for('.post', id=post.id) }}">#}
-{#                    <span class="label label-default">正文</span>#}
-{#                </a>#}
-{#                <a href="{{ url_for('.post', id=post.id) }}#comments">#}
-{#                    <span class="label label-primary">{{ post.comments.count() }} 评论</span>#}
-{#                </a>#}
-{#            </div>#}
-        </div>
-    </li>
-    {% endfor %}
-</ul>
+<table class="table table-hover">
+    <thead>
+        <th class="active">文件名</th>
+        <th class="active">文件类型</th>
+        <th class="active">上传时间</th>
+        <th class="active">上传者</th>
+        <th class='active'>文件说明</th>
+    </thead>
+    <tbody>
+        {% for file in files %}
+
+            <!-- tr -->
+            {% if file.disabled %} <tr class="bg-danger">
+            {% else %}
+            <tr class="bg-success"> {% endif %}
+                <td>{{ file.filename }}</td>
+                <td>{{ file.extension }}</td>
+                <td>{{ moment(file.timestamp).fromNow() }}</td>
+                <td>
+                <a  href="{{ url_for('main.user', username=file.uploader_user.username) }}">
+                    {{ file.uploader_user.username }}
+                </a>
+                </td>
+                <td>{{ file.note }}</td>
+                <td>
+                    {% if not file.disabled %}
+                    <a href="{{ url_for('updown.download', filename=file.filename) }}"
+                       class="btn btn-success" role ="button">下载</a>
+                    {% else %}
+                    <a class="btn btn-danger" role ="button">禁用</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
 
 {% if pagination %}
 <div class="pagination">

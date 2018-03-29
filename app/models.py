@@ -26,6 +26,7 @@ class Updown(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     uploader = db.Column(db.Integer, db.ForeignKey('users.id'))
     note = db.Column(db.String(128))
+    disabled = db.Column(db.Boolean)
 
     @staticmethod
     def filename_hash(filename):
@@ -120,6 +121,7 @@ class User(UserMixin, db.Model):
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    file = db.relationship('Updown', backref='uploader_user', lazy='dynamic')
 
     @staticmethod
     def add_self_follows():
