@@ -19,10 +19,11 @@
 <table class="table table-hover">
     <thead>
         <th class="active">文件名</th>
-        <th class="active">文件类型</th>
+        <th class="active">类型</th>
         <th class="active">上传时间</th>
         <th class="active">上传者</th>
-        <th class='active'>文件说明</th>
+        <th class='active'>说明</th>
+        <th class='active'>下载</th>
     </thead>
     <tbody>
         {% for file in files %}
@@ -31,7 +32,15 @@
             {% if file.disabled %} <tr class="bg-danger">
             {% else %}
             <tr class="bg-success"> {% endif %}
-                <td>{{ file.filename }}</td>
+                <td>{{ file.filename }}
+                {% if current_user.can(Permission.ADMIN) %}
+                    {% if file.disabled %}
+                        <a class="btn btn-default btn-xs" href="{{ url_for('updown.download_enable', id=file.id) }}">启用</a>
+                    {% else %}
+                        <a class="btn btn-danger btn-xs" href="{{ url_for('updown.download_disable', id=file.id) }}">禁用</a>
+                    {% endif %}
+                {% endif %}
+                </td>
                 <td>{{ file.extension }}</td>
                 <td>{{ moment(file.timestamp).fromNow() }}</td>
                 <td>
@@ -43,10 +52,11 @@
                 <td>
                     {% if not file.disabled %}
                     <a href="{{ url_for('updown.download', filename=file.filename) }}"
-                       class="btn btn-success" role ="button">下载</a>
+                       class="btn btn-success btn-xs" role ="button">下载</a>
                     {% else %}
-                    <a class="btn btn-danger" role ="button">禁用</a>
+                    <a class="btn btn-danger btn-xs" role ="button">禁用</a>
                     {% endif %}
+
                 </td>
             </tr>
         {% endfor %}

@@ -6,6 +6,31 @@ from . import updown
 from .. import db
 import os
 from werkzeug.utils import secure_filename
+from ..decorators import admin_required
+
+
+@updown.route('/disable/<id>')
+@login_required
+@admin_required
+def download_disable(id):
+    file = Updown.query.get_or_404(id)
+    file.disabled = True
+    db.session.add(file)
+    db.session.commit()
+    return redirect(url_for('updown.updown',
+                            page=request.args.get('page', 1, type=int)))
+
+
+@updown.route('/enable/<id>')
+@login_required
+@admin_required
+def download_enable(id):
+    file = Updown.query.get_or_404(id)
+    file.disabled = False
+    db.session.add(file)
+    db.session.commit()
+    return redirect(url_for('updown.updown',
+                            page=request.args.get('page', 1, type=int)))
 
 
 @updown.route('/download/<filename>')
@@ -37,10 +62,14 @@ def updown():
                         extension=extension,
                         uploader=current_user.id,
                         note=form.note.data)
-        db.session.add(upload)
-        db.session.commit()
-        file.save('static/download/' + file.filename)
-        flash('上传成功', category='message')
+        try:
+            file.save('app/static/download/' + file.filename)
+            # request对象中的file对象的save方法同样从项目根目录开始寻找目录
+            flash('上传成功', category='message')
+            db.session.add(upload)
+            db.session.commit()
+        except Exception as e:
+            flash('上传失败', category='error')
         return redirect(url_for('.updown'))
     query = Updown.query
     # 显示服务器上的文件
