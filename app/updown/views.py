@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from ..decorators import admin_required
 
 
-@updown.route('/disable/<id>')
+@updown.route('/download_disable/<id>')
 @login_required
 @admin_required
 def download_disable(id):
@@ -21,7 +21,7 @@ def download_disable(id):
                             page=request.args.get('page', 1, type=int)))
 
 
-@updown.route('/enable/<id>')
+@updown.route('/download_enable/<id>')
 @login_required
 @admin_required
 def download_enable(id):
