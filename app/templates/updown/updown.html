@@ -35,9 +35,9 @@
                 <td>{{ file.filename }}
                 {% if current_user.can(Permission.ADMIN) %}
                     {% if file.disabled %}
-                        <a class="btn btn-default btn-xs" href="{{ url_for('updown.download_disable', id=file.id) }}">启用</a>
+                        <a class="btn btn-default btn-xs" href="{{ url_for('updown.download_enable', id=file.id) }}">启用</a>
                     {% else %}
-                        <a class="btn btn-danger btn-xs" href="{{ url_for('updown.download_enable', id=file.id) }}">禁用</a>
+                        <a class="btn btn-danger btn-xs" href="{{ url_for('updown.download_disable', id=file.id) }}">禁用</a>
                     {% endif %}
                 {% endif %}
                 </td>
