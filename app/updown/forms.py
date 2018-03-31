@@ -11,7 +11,7 @@ class UploadForm(FlaskForm):
                                          FileAllowed(['jpg', 'png', 'torrent', 'txt'],
                                                      '只允许上传jpg png torrent以及txt文件')])
     note = StringField('文件说明', validators=[DataRequired(), Length(2, 64,
-                                              message='请认真填写文件说明，但不能超过64个字符')])
+                                           message='请认真填写文件说明，但不能超过64个字符')])
     hashname = BooleanField('上传时随机文件名（选择此项后请认真填写文件说明）')
     submit = SubmitField('确认上传')
 

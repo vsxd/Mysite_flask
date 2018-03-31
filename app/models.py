@@ -18,6 +18,10 @@ class Permission:
     ADMIN = 16
 
 
+class FunPic(db.Model):
+    pass
+
+
 class Updown(db.Model):
     __tablename__ = 'updown'
     id = db.Column(db.Integer, primary_key=True)
