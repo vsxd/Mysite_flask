@@ -10,3 +10,4 @@ My Personal Site
 + Comment management
 + Account profile detail
 + Profile editable
++ Files upload and download
