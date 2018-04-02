@@ -2,6 +2,7 @@
 .idea/
 .directory
 migrations/
+data-dev.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
