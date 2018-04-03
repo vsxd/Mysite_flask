@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Xudong - Up&Down{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    Fun Pic
+</div>
+{#<div class="funpic-tabs">#}
+{#    <ul class="nav nav-tabs">#}
+{#        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">所有Post</a></li>#}
+{#        {% if current_user.is_authenticated %}#}
+{#        <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">关注者的Post</a></li>#}
+{#        {% endif %}#}
+{#    </ul>#}
+{#    {% include '_posts.html' %}#}
+{#</div>#}
+    {% for link in links %}
+        <img src="{{ url_for(link) }}">
+    {% endfor %}
+
+
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.updown')}}
+</div>
+{% endif %}
+{% endblock %}
