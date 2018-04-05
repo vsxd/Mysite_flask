@@ -13,9 +13,9 @@ import threading
 
 class Tools:
 
-    '''解析哈希过后的img url'''
     @staticmethod
     def parse(img_hash, constant):
+        # 反哈希 解析出图片地址
         q = 4
         constant = Tools.parse_md5(constant)
         o = Tools.parse_md5(constant[0:16])
@@ -150,7 +150,7 @@ class Downloader:
             pic.write(requests.get(url, headers=self.Headers).content)
         self.thread_lock.release()  # 释放线程锁
 
-    '''在一定index范围内获得随机的下标 或 选取全部下标 参数为得到的图片数与页面最大图片数'''
+    '''在一定index范围内获得随机的下标 或选取全部下标'''
     def get_index_randomed(self, pic_num=5):
         pic_num_max = len(self.links)
         if pic_num < pic_num_max * 0.75:  # 防止传入参数超过边界 选取数接近总数时随机效率会很低 故取0.75*max
@@ -185,47 +185,6 @@ class Downloader:
 
 # class LinkSaver:
 #     Pic = FunPic()
-
-
-# def spider(soup, pic_num=3, Mode='random'):
-#     '''处理解析后的地址 选择图片 保存图片
-#     参数为beautifulsoup对象 每页爬取图片数pic_num 选取图片的方式Mode有'Random'与'HighQuality'两种方式'''
-#     result = get_constant_and_hash(soup)
-#     constant = result[0]  # 用于parse()的常量字符串
-#     hash_list = result[1]  # 哈希过后的图片地址list
-#     index_list = []  # 需要保存的图片在hash_list中的下标
-#
-#     if Mode is 'random':  # 根据参数选择图片下载模式
-#         index_list = get_random_index(pic_num, len(hash_list))
-#     elif Mode is 'rank':
-#         index_list = get_rank_index(soup)
-#     else:
-#         return None
-#
-#     for index in index_list:
-#         img_hash = hash_list[index]
-#         url = 'http:' + Tools.parse(img_hash, constant)
-#         replace = re.match(r'(.*\.sinaimg\.cn\/)(\w+)(\/.+\.gif)', url)
-#         if replace:
-#             url = replace.group(1) + 'large' + replace.group(3)  # 获得原图url
-#         ext_match = re.match(r'.*(\.\w+)', url)
-#         extension_name = ext_match.group(1)  # 获得图片扩展名
-#         md5 = hashlib.md5()
-#         md5.update(url.encode("utf8"))  # 用md5后的图片url作为文件名
-#         file_name = md5.hexdigest() + extension_name
-#         Infos.HEADERS['host'] = 'wx3.sinaimg.cn'  # 此处利用了HEADERS 但会使其不能再用于获取html
-#         thread_lock.acquire()  # 获得线程锁
-#         thread = threading.Thread(target=download_pic, args=(file_name, url))
-#         thread.start()  # 线程开始
-
-
-# def main():
-#     '''main'''
-#     soup_list = get_soup_list(page_num=2)  # 妹子图
-#     # soup_list = get_soup_list('http://jandan.net/pic', 5)  # 无聊图
-#     for soup in soup_list:
-#         time.sleep(2)
-#         spider(soup, pic_num=100, Mode='Random')
 
 
 if __name__ == '__main__':
