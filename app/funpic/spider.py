@@ -62,64 +62,76 @@ class Tools:
             data += '=' * missing_padding
         return base64.b64decode(data)
 
-
-class Infos:
-    # global infos
-    HEADERS = {
-        'Accept-Language': 'zh-CN,zh;q=0.9',
-        'Cookie': 'nsfw-click-load=off; bad-click-load=on; gif-click-load=on',  # 关闭NSFW
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.99 Safari/537.36'
-    }
-
-    JS_FILE = None
+#
+# class Infos:
+#     # global infos
+#     HEADERS = {
+#         'Accept-Language': 'zh-CN,zh;q=0.9',
+#         'Cookie': 'nsfw-click-load=off; bad-click-load=on; gif-click-load=on',  # 关闭NSFW
+#         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+#         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.99 Safari/537.36'
+#     }
+#
+#     JS_FILE = None
 
 
 class Spider:
 
-    def __init__(self, url='http://jandan.net/ooxx', page_num=3):
+    def __init__(self, url='http://jandan.net/ooxx', page_num=3, mode='rank'):
+        self.Headers = {
+            'Accept-Language': 'zh-CN,zh;q=0.9',
+            'Cookie': 'nsfw-click-load=off; bad-click-load=on; gif-click-load=on',  # 关闭NSFW
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+            AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.99 Safari/537.36'
+        }
+        self.Js_file = None
         self.url = url
         self.page_num = page_num
-        self.pages = []
+        self.mode = mode
+        self._constant = ''
+        self.soup_list = []
+        self.links = []
+        self.index_list = []
         random.seed(datetime.datetime.now())  # 设置随机数种子
+        self.init_soup_list()
+        self.init_constant()
 
     def init_soup_list(self):
         '''返回包含page_num个beautifsoup对象的列表 page_num是返回的页面数目
         已验证可爬取无聊图http://jandan.net/pic 和 妹子图 http://jandan.net/ooxx'''
-        pages = []
         for i in range(self.page_num):
-            time.sleep(1)
+            # time.sleep(1)
             print('Url:', self.url)
-            html = requests.get(self.url, headers=Infos.HEADERS).text
+            html = requests.get(self.url, headers=self.Headers).text
             soup = BeautifulSoup(html, 'lxml')
-            self.pages.append(soup)
+            self.soup_list.append(soup)
             self.url = 'http:' + \
                        soup.select('.previous-comment-page')[0]['href']  # 得到下一页的url
 
-    def get_constant_and_hash(self, soup):
-        '''得到解析函数所需的常量字符串和哈希后的地址 参数为beautifulsoup对象'''
-        if Infos.JS_FILE is None:  # js文件只获取一次 多次会跳转页面
-            j = soup.find('script', {'src': re.compile(
+    def init_constant(self):
+        # js中加密函数的常量参数是在某段时间内是固定的 所以可以只在构造函数钟获取一次
+        if self.Js_file is None:  # js文件只获取一次 多次会跳转页面
+            j = self.soup_list[0].find('script', {'src': re.compile(
                 r'\/\/cdn.jandan.net\/static\/min.*?\.js')})
             js_file_url = "http://" + j['src'][2:]
             print('js_file_url=' + js_file_url)
-            Infos.JS_FILE = requests.get(js_file_url, headers=Infos.HEADERS).text
+            self.Js_file = requests.get(js_file_url, headers=self.Headers).text
         cons = re.search(
-            r'var\sc=.\w+\(e,\"(\w+)\"\)', Infos.JS_FILE)  # 得到原js函数中的一个用于解析的字符串实参
-        constant = cons.group(1)
+            r'var\sc=.\w+\(e,\"(\w+)\"\)', self.Js_file)  # 得到原js函数中的一个用于解析的字符串实参
+        self._constant = cons.group(1)
 
-        result_list = []
-        for item in soup.select('.img-hash'):
-            result_list.append(item.text)  # 得到所有哈希过后的图片地址
-            return constant, result_list
+    def link_antihash(self):
+        for soup in self.soup_list:
+            for item in soup.select('.img-hash'):
+                self.links.append(item.text)  # 得到所有哈希过后的图片地址
 
-    def get_rank_index(self, soup):
+    def get_rank_index(self):
         '''筛选图片 得到评价相对好的图片 参数为beautifulsoup对象'''
         votes_list = soup.find('ol', {'class': 'commentlist'}).find_all(
             'div', {'class': 'jandan-vote'})
         like_socres = []  # 每张图片的oo数
         unlike_socres = []  # 每张图片的xx数
-        index_list = []  # 高质量图片的下标
+        # index_list = []  # 高质量图片的下标
         for vote in votes_list:
             like = vote.find(
                 'span', {'class': 'tucao-like-container'}).find('span').string
@@ -130,34 +142,34 @@ class Spider:
         for index in map(like_socres.index, like_socres):
             # 选取oo大于xx三倍 且 xx小于25的图片
             if (like_socres[index] > unlike_socres[index] * 3) and (unlike_socres[index] < 25):
-                index_list.append(index)
-        return index_list
+                self.index_list.append(index)
 
     def get_random_index(self, pic_num, pic_num_max):
         '''在一定index范围内获得随机的下标 或 选取全部下标 参数为得到的图片数与页面最大图片数'''
-        index_list = []
+        # index_list = []
         if pic_num < pic_num_max * 0.75:  # 防止传入参数超过边界 选取数接近总数时随机效率会很低 故取0.75*max
             for i in range(pic_num):
                 index = int(random.random() * pic_num_max)
-                while index in index_list:  # 随机选取的图片已存在时 再次选取
+                while index in self.index_list:  # 随机选取的图片已存在时 再次选取
                     index = int(random.random() * pic_num_max)
-                index_list.append(index)
+                self.index_list.append(index)
         else:  # 参数越界后选取全部图片
             for i in range(pic_num_max):
-                index_list.append(i)
-        return index_list
+                self.index_list.append(i)
 
 
 class Downloader:
 
-    def __init__(self, file_list, max_threads=10):
-        self.file_list = file_list
+    def __init__(self, spider, max_threads=10):
+        self.url_list = spider.pages
         self.thread_lock = threading.BoundedSemaphore(value=max_threads)  # 设置最大线程数
+        self.Headers = spider.Headers
+
 
     def download_pic(self, file_name, url):
         print('Pic: ', file_name)
         with open('pics/' + file_name, 'wb') as pic:
-            pic.write(requests.get(url, headers=Infos.HEADERS).content)
+            pic.write(requests.get(url, headers=self.Headers).content)
         self.thread_lock.release()  # 释放线程锁
 
 
