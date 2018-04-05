@@ -8,7 +8,7 @@ import base64
 from bs4 import BeautifulSoup
 import requests
 import threading
-# from ..models import FunPic
+from ..models import FunPic
 
 
 class Tools:
@@ -123,15 +123,18 @@ class Downloader:
         self.index_list = []
         self.url_list = spider.links
         self._soup_list = spider.soup_list
+        self._page_num = spider.page_num
         self.thread_lock = threading.BoundedSemaphore(value=max_threads)  # 设置最大线程数
         self.Headers = spider.Headers.update({'host': 'wx3.sinaimg.cn'})
-        if mode is 'rank':
+        self.mode = mode
+
+    def download_pic(self):
+        if self.mode is 'rank':
             self.get_index_ranked()
         else:
             random.seed(datetime.datetime.now())  # 设置随机数种子
             self.get_index_randomed()
 
-    def download_pic(self):
         for index in self.index_list:
             self.thread_lock.acquire()  # 获得线程锁
             print(self.url_list[index])
@@ -143,23 +146,23 @@ class Downloader:
             thread.start()  # 线程开始
 
     def _download_thread(self, url):
-
+        # 下载线程
         file_name = os.path.basename(url)
         print('Pic: ', file_name)
         with open('pics/' + file_name, 'wb') as pic:
             pic.write(requests.get(url, headers=self.Headers).content)
         self.thread_lock.release()  # 释放线程锁
 
-    '''在一定index范围内获得随机的下标 或选取全部下标'''
+    '''获得随机的下标 或选取全部下标'''
     def get_index_randomed(self, pic_num=5):
-        pic_num_max = len(self.links)
-        if pic_num < pic_num_max * 0.75:  # 防止传入参数超过边界 选取数接近总数时随机效率会很低 故取0.75*max
+        pic_num = pic_num * self._page_num
+        pic_num_max = len(self.url_list)
+        if pic_num < pic_num_max:
+            index = [i for i in range(len(self.url_list))]
             for i in range(pic_num):
-                index = int(random.random() * pic_num_max)
-                while index in self.index_list:  # 随机选取的图片已存在时 再次选取
-                    index = int(random.random() * pic_num_max)
-                self.index_list.append(index)
-        else:  # 参数越界后选取全部图片
+                ind = int(random.random() * len(index))
+                self.index_list.append(index.pop(ind))
+        else:  # 如果pic_num大于max则选择全部下标
             for i in range(pic_num_max):
                 self.index_list.append(i)
 
@@ -183,10 +186,13 @@ class Downloader:
                     self.index_list.append(index)
 
 
-# class LinkSaver:
-#     Pic = FunPic()
+class LinkSaver:
+    def __init__(self, downloader=Downloader()):
+        pass
+
+    Pic = FunPic()
 
 
 if __name__ == '__main__':
-    down = Downloader()
+    down = Downloader(mode='random')
     down.download_pic()
