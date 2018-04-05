@@ -1,4 +1,5 @@
 import re
+import os
 import random
 import datetime
 import time
@@ -7,10 +8,11 @@ import base64
 from bs4 import BeautifulSoup
 import requests
 import threading
-from ..models import FunPic
+# from ..models import FunPic
 
 
 class Tools:
+
     '''解析哈希过后的img url'''
     @staticmethod
     def parse(img_hash, constant):
@@ -62,22 +64,10 @@ class Tools:
             data += '=' * missing_padding
         return base64.b64decode(data)
 
-#
-# class Infos:
-#     # global infos
-#     HEADERS = {
-#         'Accept-Language': 'zh-CN,zh;q=0.9',
-#         'Cookie': 'nsfw-click-load=off; bad-click-load=on; gif-click-load=on',  # 关闭NSFW
-#         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-#         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.99 Safari/537.36'
-#     }
-#
-#     JS_FILE = None
-
 
 class Spider:
 
-    def __init__(self, url='http://jandan.net/ooxx', page_num=3, mode='rank'):
+    def __init__(self, url='http://jandan.net/ooxx', page_num=3):
         self.Headers = {
             'Accept-Language': 'zh-CN,zh;q=0.9',
             'Cookie': 'nsfw-click-load=off; bad-click-load=on; gif-click-load=on',  # 关闭NSFW
@@ -87,20 +77,17 @@ class Spider:
         self.Js_file = None
         self.url = url
         self.page_num = page_num
-        self.mode = mode
         self._constant = ''
         self.soup_list = []
         self.links = []
-        self.index_list = []
-        random.seed(datetime.datetime.now())  # 设置随机数种子
+
         self.init_soup_list()
         self.init_constant()
+        self.links_antihash()
 
     def init_soup_list(self):
-        '''返回包含page_num个beautifsoup对象的列表 page_num是返回的页面数目
-        已验证可爬取无聊图http://jandan.net/pic 和 妹子图 http://jandan.net/ooxx'''
         for i in range(self.page_num):
-            # time.sleep(1)
+            time.sleep(0.5)
             print('Url:', self.url)
             html = requests.get(self.url, headers=self.Headers).text
             soup = BeautifulSoup(html, 'lxml')
@@ -114,39 +101,58 @@ class Spider:
             j = self.soup_list[0].find('script', {'src': re.compile(
                 r'\/\/cdn.jandan.net\/static\/min.*?\.js')})
             js_file_url = "http://" + j['src'][2:]
-            print('js_file_url=' + js_file_url)
+            # print('js_file_url=' + js_file_url)
             self.Js_file = requests.get(js_file_url, headers=self.Headers).text
         cons = re.search(
             r'var\sc=.\w+\(e,\"(\w+)\"\)', self.Js_file)  # 得到原js函数中的一个用于解析的字符串实参
         self._constant = cons.group(1)
 
-    def link_antihash(self):
+    def links_antihash(self):
         for soup in self.soup_list:
             for item in soup.select('.img-hash'):
-                self.links.append(item.text)  # 得到所有哈希过后的图片地址
+                url = 'http:' + Tools.parse(item.text, self._constant)  # 使用Tools类的解析方法反哈希
+                replace = re.match(r'(.*\.sinaimg\.cn\/)(\w+)(\/.+\.gif)', url)
+                if replace:
+                    url = replace.group(1) + 'large' + replace.group(3)  # 获得原图url
+                self.links.append(url)  # 添加图片地址
 
-    def get_rank_index(self):
-        '''筛选图片 得到评价相对好的图片 参数为beautifulsoup对象'''
-        votes_list = soup.find('ol', {'class': 'commentlist'}).find_all(
-            'div', {'class': 'jandan-vote'})
-        like_socres = []  # 每张图片的oo数
-        unlike_socres = []  # 每张图片的xx数
-        # index_list = []  # 高质量图片的下标
-        for vote in votes_list:
-            like = vote.find(
-                'span', {'class': 'tucao-like-container'}).find('span').string
-            like_socres.append(int(like))
-            unlike = vote.find(
-                'span', {'class': 'tucao-unlike-container'}).find('span').string
-            unlike_socres.append(int(unlike))
-        for index in map(like_socres.index, like_socres):
-            # 选取oo大于xx三倍 且 xx小于25的图片
-            if (like_socres[index] > unlike_socres[index] * 3) and (unlike_socres[index] < 25):
-                self.index_list.append(index)
 
-    def get_random_index(self, pic_num, pic_num_max):
-        '''在一定index范围内获得随机的下标 或 选取全部下标 参数为得到的图片数与页面最大图片数'''
-        # index_list = []
+class Downloader:
+
+    def __init__(self, spider=Spider(), max_threads=10, mode='rank'):
+        self.index_list = []
+        self.url_list = spider.links
+        self._soup_list = spider.soup_list
+        self.thread_lock = threading.BoundedSemaphore(value=max_threads)  # 设置最大线程数
+        self.Headers = spider.Headers.update({'host': 'wx3.sinaimg.cn'})
+        if mode is 'rank':
+            self.get_index_ranked()
+        else:
+            random.seed(datetime.datetime.now())  # 设置随机数种子
+            self.get_index_randomed()
+
+    def download_pic(self):
+        for index in self.index_list:
+            self.thread_lock.acquire()  # 获得线程锁
+            print(self.url_list[index])
+            print(type(self.url_list[index]))
+            thread = threading.Thread(target=self._download_thread,
+                                      args=(self.url_list[index], ))
+            # 此处有疑问，args=([实参])？ 而不是 args=(实参)？
+            # 其实args=tuple，当只有一个实参时，需要args=(实参, )
+            thread.start()  # 线程开始
+
+    def _download_thread(self, url):
+
+        file_name = os.path.basename(url)
+        print('Pic: ', file_name)
+        with open('pics/' + file_name, 'wb') as pic:
+            pic.write(requests.get(url, headers=self.Headers).content)
+        self.thread_lock.release()  # 释放线程锁
+
+    '''在一定index范围内获得随机的下标 或 选取全部下标 参数为得到的图片数与页面最大图片数'''
+    def get_index_randomed(self, pic_num=5):
+        pic_num_max = len(self.links)
         if pic_num < pic_num_max * 0.75:  # 防止传入参数超过边界 选取数接近总数时随机效率会很低 故取0.75*max
             for i in range(pic_num):
                 index = int(random.random() * pic_num_max)
@@ -157,24 +163,28 @@ class Spider:
             for i in range(pic_num_max):
                 self.index_list.append(i)
 
+    '''筛选图片 得到评价相对好的图片'''
+    def get_index_ranked(self):
+        for soup in self._soup_list:
+            votes_list = soup.find('ol', {'class': 'commentlist'}).find_all(
+                'div', {'class': 'jandan-vote'})
+            like_socres = []  # 每张图片的oo数
+            unlike_socres = []  # 每张图片的xx数
+            for vote in votes_list:
+                like = vote.find(
+                    'span', {'class': 'tucao-like-container'}).find('span').string
+                like_socres.append(int(like))
+                unlike = vote.find(
+                    'span', {'class': 'tucao-unlike-container'}).find('span').string
+                unlike_socres.append(int(unlike))
+            for index in map(like_socres.index, like_socres):
+                # 选取oo大于xx三倍 且 xx小于25的图片
+                if (like_socres[index] > unlike_socres[index] * 3) and (unlike_socres[index] < 25):
+                    self.index_list.append(index)
 
-class Downloader:
 
-    def __init__(self, spider, max_threads=10):
-        self.url_list = spider.pages
-        self.thread_lock = threading.BoundedSemaphore(value=max_threads)  # 设置最大线程数
-        self.Headers = spider.Headers
-
-
-    def download_pic(self, file_name, url):
-        print('Pic: ', file_name)
-        with open('pics/' + file_name, 'wb') as pic:
-            pic.write(requests.get(url, headers=self.Headers).content)
-        self.thread_lock.release()  # 释放线程锁
-
-
-class LinkSaver:
-    Pic = FunPic()
+# class LinkSaver:
+#     Pic = FunPic()
 
 
 # def spider(soup, pic_num=3, Mode='random'):
@@ -216,3 +226,8 @@ class LinkSaver:
 #     for soup in soup_list:
 #         time.sleep(2)
 #         spider(soup, pic_num=100, Mode='Random')
+
+
+if __name__ == '__main__':
+    down = Downloader()
+    down.download_pic()
