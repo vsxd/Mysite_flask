@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import requests
 import threading
 from ..models import FunPic
+from .. import db
 
 
 class Tools:
@@ -126,15 +127,15 @@ class Downloader:
         self._page_num = spider.page_num
         self.thread_lock = threading.BoundedSemaphore(value=max_threads)  # 设置最大线程数
         self.Headers = spider.Headers.update({'host': 'wx3.sinaimg.cn'})
-        self.mode = mode
-
-    def download_pic(self):
-        if self.mode is 'rank':
+        if mode is 'all':
+            self.get_index_randomed(pic_num=len(self.url_list))
+        elif mode is 'rank':
             self.get_index_ranked()
         else:
             random.seed(datetime.datetime.now())  # 设置随机数种子
             self.get_index_randomed()
 
+    def download_pic(self):
         for index in self.index_list:
             self.thread_lock.acquire()  # 获得线程锁
             print(self.url_list[index])
@@ -171,26 +172,36 @@ class Downloader:
         for soup in self._soup_list:
             votes_list = soup.find('ol', {'class': 'commentlist'}).find_all(
                 'div', {'class': 'jandan-vote'})
-            like_socres = []  # 每张图片的oo数
-            unlike_socres = []  # 每张图片的xx数
+            like_scores = []  # 每张图片的oo数
+            unlike_scores = []  # 每张图片的xx数
             for vote in votes_list:
                 like = vote.find(
                     'span', {'class': 'tucao-like-container'}).find('span').string
-                like_socres.append(int(like))
+                like_scores.append(int(like))
                 unlike = vote.find(
                     'span', {'class': 'tucao-unlike-container'}).find('span').string
-                unlike_socres.append(int(unlike))
-            for index in map(like_socres.index, like_socres):
+                unlike_scores.append(int(unlike))
+            for index in map(like_scores.index, like_scores):
                 # 选取oo大于xx三倍 且 xx小于25的图片
-                if (like_socres[index] > unlike_socres[index] * 3) and (unlike_socres[index] < 25):
+                if (like_scores[index] > unlike_scores[index] * 3) and (unlike_scores[index] < 25):
                     self.index_list.append(index)
 
 
 class LinkSaver:
     def __init__(self, downloader=Downloader()):
-        pass
+        self.url_list = downloader.url_list
+        self.index_list = downloader.index_list
 
-    Pic = FunPic()
+    def save_to_database(self):
+        for url in self.url_list:
+            pic = FunPic(piclink=url,
+                         disabled=False)
+            if self.url_list.index(url) in self.index_list:
+                pic.info = 'good'
+            else:
+                pic.info = 'not good'
+            db.session.add(pic)
+            db.session.commit()
 
 
 if __name__ == '__main__':
