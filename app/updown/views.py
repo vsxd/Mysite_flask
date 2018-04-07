@@ -56,14 +56,14 @@ def updown():
         file = request.files['file']  # 直接从request对象中获取file
         filename = secure_filename(file.filename)
         extension = os.path.splitext(filename)[1][1:]  # 取扩展名并丢掉'.'
-        if not form.hashname.false_values:
+        if form.hashname.data:
             filename = Updown.filename_hash(filename)
         upload = Updown(filename=filename,
                         extension=extension,
                         uploader=current_user.id,
                         note=form.note.data)
         try:
-            file.save('app/static/download/' + file.filename)
+            file.save('app/static/download/' + filename + '.' + extension)
             # request对象中的file对象的save方法同样从项目根目录开始寻找目录
             flash('上传成功', category='message')
             db.session.add(upload)
