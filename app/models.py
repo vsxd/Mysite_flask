@@ -22,6 +22,7 @@ class FunPic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     piclink = db.Column(db.String(256), unique=True)
     info = db.Column(db.String(128))
+    type = db.Column(db.String(16))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     disabled = db.Column(db.Boolean, default=False)
 

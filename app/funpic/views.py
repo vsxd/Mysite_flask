@@ -15,7 +15,7 @@ def download_disable(id):
     file.disabled = True
     db.session.add(file)
     db.session.commit()
-    return redirect(url_for('updown.updown',
+    return redirect(url_for('funpic.girls',
                             page=request.args.get('page', 1, type=int)))
 
 
@@ -27,20 +27,32 @@ def download_enable(id):
     file.disabled = False
     db.session.add(file)
     db.session.commit()
-    return redirect(url_for('updown.updown',
+    return redirect(url_for('funpic.girls',
                             page=request.args.get('page', 1, type=int)))
 
 
-@funpic.route('/funpic/girls')
+@funpic.route('/girls')
 def girls():
     query = FunPic.query
     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
     links = pagination.items
     return render_template('funpic/funpic.html',
                            links=links,
+                           girls=True,
                            pagination=pagination)
 
-#
+
+@funpic.route('/funny')
+def funny():
+    query = FunPic.query
+    pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
+    links = pagination.items
+    return render_template('funpic/funpic.html',
+                           links=links,
+                           girls=True,
+                           pagination=pagination)
+
+
 # @funpic.route('/', methods=['GET', 'POST'])
 # # 暂时不要求注册帐号才能访问 @login_required
 # def updown():

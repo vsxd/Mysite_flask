@@ -8,18 +8,19 @@
 <div class="page-header">
     Fun Pic
 </div>
-{#<div class="funpic-tabs">#}
-{#    <ul class="nav nav-tabs">#}
-{#        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">所有Post</a></li>#}
-{#        {% if current_user.is_authenticated %}#}
-{#        <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">关注者的Post</a></li>#}
+<div class="funpic-tabs">
+    <ul class="nav nav-tabs">
+{#        {% if current_user.is_authenticated %} 暂不进行权限管理#}
+        <li{% if girls %} class="active"{% endif %}><a href="{{ url_for('.girls') }}">Girls</a></li>
 {#        {% endif %}#}
-{#    </ul>#}
-{#    {% include '_posts.html' %}#}
-{#</div>#}
+        <li{% if funny %} class="active"{% endif %}><a href="{{ url_for('.girls') }}">Funny</a></li>
+
+    </ul>
     {% for link in links %}
         <img src="{{ url_for(link) }}">
     {% endfor %}
+</div>
+
 
 
 {% if pagination %}
