@@ -8,8 +8,8 @@ import base64
 from bs4 import BeautifulSoup
 import requests
 import threading
-from ..models import FunPic
-from .. import db
+# from ..models import FunPic
+# from .. import db
 
 
 class Tools:
@@ -163,7 +163,7 @@ class Downloader:
             for i in range(pic_num):
                 ind = int(random.random() * len(index))
                 self.index_list.append(index.pop(ind))
-        else:  # 如果pic_num大于max则选择全部下标
+        else:  # 如果pic_nupdownum大于max则选择全部下标
             for i in range(pic_num_max):
                 self.index_list.append(i)
 
@@ -187,23 +187,23 @@ class Downloader:
                     self.index_list.append(index)
 
 
-class LinkSaver:
-    def __init__(self, downloader=Downloader()):
-        self.url_list = downloader.url_list
-        self.index_list = downloader.index_list
+# class LinkSaver:
+#     def __init__(self, downloader=Downloader()):
+#         self.url_list = downloader.url_list
+#         self.index_list = downloader.index_list
+#
+#     def save_to_database(self):
+#         for url in self.url_list:
+#             pic = FunPic(piclink=url,
+#                          disabled=False)
+#             if self.url_list.index(url) in self.index_list:
+#                 pic.info = 'good'
+#             else:
+#                 pic.info = 'not good'
+#             db.session.add(pic)
+#             db.session.commit()
 
-    def save_to_database(self):
-        for url in self.url_list:
-            pic = FunPic(piclink=url,
-                         disabled=False)
-            if self.url_list.index(url) in self.index_list:
-                pic.info = 'good'
-            else:
-                pic.info = 'not good'
-            db.session.add(pic)
-            db.session.commit()
 
-
-if __name__ == '__main__':
-    down = Downloader(mode='random')
-    down.download_pic()
+# if __name__ == '__main__':
+    # down = Downloader(mode='random')
+    # down.download_pic()

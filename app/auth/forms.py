@@ -15,7 +15,7 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField('密码', validators=[DataRequired(message='Email不能为空'),
+    email = StringField('Email', validators=[DataRequired(message='Email不能为空'),
                                           Length(6, 64, message='字数只能在6-64'),
                                           Email(message='请使用邮箱注册')])
     username = StringField('昵称', validators=[

@@ -3,7 +3,7 @@ from ..models import FunPic
 from flask_login import login_required, current_user
 from . import funpic
 from .. import db
-import os
+from .forms import Funpic
 from ..decorators import admin_required
 
 
@@ -33,10 +33,16 @@ def download_enable(id):
 
 @funpic.route('/girls')
 def girls():
+    form = Funpic()
     query = FunPic.query
+    # if form.validate_on_submit():
+    #     ls = LinkSaver()
+    #     ls.save_to_database()
+    #     redirect(url_for('.funpic'))
     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
     links = pagination.items
     return render_template('funpic/funpic.html',
+                           form=form,
                            links=links,
                            girls=True,
                            pagination=pagination)
@@ -49,7 +55,7 @@ def funny():
     links = pagination.items
     return render_template('funpic/funpic.html',
                            links=links,
-                           girls=True,
+                           girls=False,
                            pagination=pagination)
 
 

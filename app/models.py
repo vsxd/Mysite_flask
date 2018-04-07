@@ -19,6 +19,7 @@ class Permission:
 
 
 class FunPic(db.Model):
+    __tablename__ = 'funpic'
     id = db.Column(db.Integer, primary_key=True)
     piclink = db.Column(db.String(256), unique=True)
     info = db.Column(db.String(128))
