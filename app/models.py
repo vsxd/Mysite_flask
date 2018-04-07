@@ -26,6 +26,9 @@ class FunPic(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     disabled = db.Column(db.Boolean, default=False)
 
+    def __repr__(self):
+        return '<FunPic %r>' % self.piclink
+
 
 class Updown(db.Model):
     __tablename__ = 'updown'
@@ -40,6 +43,9 @@ class Updown(db.Model):
     @staticmethod
     def filename_hash(filename):
         return hashlib.md5(filename.lower().encode('utf-8')).hexdigest()
+
+    def __repr__(self):
+        return '<Updown %r>' % self.filename
 
 
 class Role(db.Model):
