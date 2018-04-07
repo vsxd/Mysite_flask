@@ -56,6 +56,7 @@ def updown():
         file = request.files['file']  # 直接从request对象中获取file
         filename = secure_filename(file.filename)
         extension = os.path.splitext(filename)[1][1:]  # 取扩展名并丢掉'.'
+        filename = os.path.splitext(filename)[0]  # 取文件名
         if form.hashname.data:
             filename = Updown.filename_hash(filename)
         upload = Updown(filename=filename,
