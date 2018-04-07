@@ -19,13 +19,16 @@ class Permission:
 
 
 class FunPic(db.Model):
+    __tablename__ = 'funpic'
     id = db.Column(db.Integer, primary_key=True)
-    piclink = db.Column(db.String(256))
+    piclink = db.Column(db.String(256), unique=True)
     info = db.Column(db.String(128))
+    type = db.Column(db.String(16))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     disabled = db.Column(db.Boolean, default=False)
 
-    pass
+    def __repr__(self):
+        return '<FunPic %r>' % self.piclink
 
 
 class Updown(db.Model):
@@ -41,6 +44,9 @@ class Updown(db.Model):
     @staticmethod
     def filename_hash(filename):
         return hashlib.md5(filename.lower().encode('utf-8')).hexdigest()
+
+    def __repr__(self):
+        return '<Updown %r>' % self.filename
 
 
 class Role(db.Model):

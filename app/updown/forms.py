@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
-from wtforms import ValidationError
-from ..models import User
+from wtforms.validators import DataRequired, Length
+# from wtforms import ValidationError
 
 
 class UploadForm(FlaskForm):
@@ -16,4 +15,5 @@ class UploadForm(FlaskForm):
     submit = SubmitField('确认上传')
 
     def validate_file(self, field):
+        # 验证文件大小? 验证文件名长度? 验证文件名是否重复?
         pass

@@ -35,8 +35,11 @@ def create_app(config_name):
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
-    from .updown import updown as updown_blueprit
-    app.register_blueprint(updown_blueprit, url_prefix='/updown')
+    from .updown import updown as updown_blueprint
+    app.register_blueprint(updown_blueprint, url_prefix='/updown')
+
+    from .funpic import funpic as funpic_blueprint
+    app.register_blueprint(funpic_blueprint, url_prefix='/funpic')
 
     from .api import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api/v1')

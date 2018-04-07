@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Xudong - Up&Down{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    Fun Pic
+</div>
+<div>
+    {{ wtf.quick_form(form) }}
+</div>
+<div class="funpic-tabs">
+    <ul class="nav nav-tabs">
+{#        {% if current_user.is_authenticated %} 暂不进行权限管理#}
+        <li{% if girls %} class="active"{% endif %}><a href="{{ url_for('.girls') }}">Girls</a></li>
+{#        {% endif %}#}
+        <li{% if funny %} class="active"{% endif %}><a href="{{ url_for('.girls') }}">Funny</a></li>
+
+    </ul>
+    {% for link in links %}
+        <img src="{{ url_for(link) }}">
+    {% endfor %}
+</div>
+
+
+
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.updown')}}
+</div>
+{% endif %}
+{% endblock %}
