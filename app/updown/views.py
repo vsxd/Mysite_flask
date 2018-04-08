@@ -78,5 +78,4 @@ def updown():
     return render_template('updown/updown.html',
                            upform=form,
                            files=files,
-                           len=len,
                            pagination=pagination)
