@@ -3,4 +3,4 @@ from wtforms import SubmitField
 
 
 class Funpic(FlaskForm):
-    submit = SubmitField('[Admin]')
+    submit = SubmitField('Refresh [Admin]')

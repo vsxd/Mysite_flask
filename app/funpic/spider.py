@@ -8,8 +8,8 @@ import base64
 from bs4 import BeautifulSoup
 import requests
 import threading
-# from ..models import FunPic
-# from .. import db
+from ..models import FunPic
+from .. import db
 
 
 class Tools:
@@ -187,23 +187,19 @@ class Downloader:
                     self.index_list.append(index)
 
 
-# class LinkSaver:
-#     def __init__(self, downloader=Downloader()):
-#         self.url_list = downloader.url_list
-#         self.index_list = downloader.index_list
-#
-#     def save_to_database(self):
-#         for url in self.url_list:
-#             pic = FunPic(piclink=url,
-#                          disabled=False)
-#             if self.url_list.index(url) in self.index_list:
-#                 pic.info = 'good'
-#             else:
-#                 pic.info = 'not good'
-#             db.session.add(pic)
-#             db.session.commit()
+class LinkSaver:
+    def __init__(self, downloader=Downloader()):
+        self.url_list = downloader.url_list
+        self.index_list = downloader.index_list
 
-
-# if __name__ == '__main__':
-    # down = Downloader(mode='random')
-    # down.download_pic()
+    def save_to_database(self):
+        for url in self.url_list:
+            pic = FunPic(piclink=url,
+                         type='girls',
+                         disabled=False)
+            if self.url_list.index(url) in self.index_list:
+                pic.info = 'good'
+            else:
+                pic.info = 'not good'
+            db.session.add(pic)
+            db.session.commit()
