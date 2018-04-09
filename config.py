@@ -8,8 +8,9 @@ class Config:
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '25'))
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in \
         ['true', 'on', '1']
+    # ycudodwpfeycbedh
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')  # ycudodwpfeycbedh
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     FLASKY_MAIL_SUBJECT_PREFIX = '[Xudong]'
     FLASKY_MAIL_SENDER = 'xudong714@foxmail.com'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
