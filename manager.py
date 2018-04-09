@@ -3,7 +3,6 @@ from app.models import User, Role, Post
 from flask_script import Manager, Shell
 from flask_migrate import MigrateCommand, Migrate
 
-
 app = create_app('default')
 manager = Manager(app)
 migrate = Migrate(app, db)
