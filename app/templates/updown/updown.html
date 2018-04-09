@@ -16,7 +16,7 @@
     {% endif %}
 </div>
 
-<table class="table table-hover">
+<table class="table">
     <thead>
         <th class="active">文件名</th>
         <th class="active">类型</th>
@@ -51,12 +51,11 @@
                 <td>{{ file.note }}</td>
                 <td>
                     {% if not file.disabled %}
-                    <a href="{{ url_for('updown.download', filename=file.filename) }}"
+                    <a href="{{ url_for('updown.download', filename=file.filename+'.'+file.extension) }}"
                        class="btn btn-success btn-xs" role ="button">下载</a>
                     {% else %}
                     <a class="btn btn-danger btn-xs" role ="button">禁用</a>
                     {% endif %}
-
                 </td>
             </tr>
         {% endfor %}

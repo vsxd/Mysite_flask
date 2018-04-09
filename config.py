@@ -19,6 +19,15 @@ class Config:
     FLASKY_FOLLOWERS_PER_PAGE = 50
     FLASKY_COMMENTS_PER_PAGE = 30
     FLASKY_SLOW_DB_QUERY_TIME = 0.5
+    JOBS = [
+        {
+            'id': 'spider_girls',
+            'func': 'app.funpic.spider:linksave_scheduler',
+            'args': None,
+            'trigger': 'interval',
+            'seconds': 10 * 60
+        }
+    ]
 
     @staticmethod
     def init_app(app):

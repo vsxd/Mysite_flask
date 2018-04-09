@@ -1,7 +1,10 @@
 # my
 .idea/
 .directory
+<<<<<<< HEAD
 app/static/download
+=======
+>>>>>>> funpic
 data-dev.sqlite
 
 # Byte-compiled / optimized / DLL files
