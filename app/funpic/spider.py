@@ -10,6 +10,7 @@ import requests
 import threading
 from ..models import FunPic
 from .. import db
+from sqlalchemy.exc import IntegrityError
 
 
 class Tools:
@@ -68,7 +69,7 @@ class Tools:
 
 class Spider:
 
-    def __init__(self, url='http://jandan.net/ooxx', page_num=3):
+    def __init__(self, url='http://jandan.net/ooxx', page_num=2):
         self.Headers = {
             'Accept-Language': 'zh-CN,zh;q=0.9',
             'Cookie': 'nsfw-click-load=off; bad-click-load=on; gif-click-load=on',  # 关闭NSFW
@@ -188,18 +189,35 @@ class Downloader:
 
 
 class LinkSaver:
-    def __init__(self, downloader=Downloader()):
-        self.url_list = downloader.url_list
-        self.index_list = downloader.index_list
+    def __init__(self):
+        self.downloader = None
+        self.url_list = []
+        self.index_list = []
+
+    def lazy_init(self, url='http://jandan.net/ooxx', mode='rank'):
+        self.downloader = Downloader(spider=Spider(url=url), mode=mode)
+        self.url_list = self.downloader.url_list
+        self.index_list = self.downloader.index_list
 
     def save_to_database(self):
         for url in self.url_list:
-            pic = FunPic(piclink=url,
-                         type='girls',
-                         disabled=False)
-            if self.url_list.index(url) in self.index_list:
-                pic.info = 'good'
-            else:
-                pic.info = 'not good'
-            db.session.add(pic)
-            db.session.commit()
+            try:
+                pic = FunPic(piclink=url,
+                             type='girls',
+                             disabled=False)
+                if self.url_list.index(url) in self.index_list:
+                    pic.info = 'good'
+                else:
+                    pic.info = 'not good'
+                db.session.add(pic)
+                db.session.commit()
+            except IntegrityError as e:
+                db.session.rollback()
+                # print('repeat piclink')
+
+
+def linksave_scheduler(url='http://jandan.net/ooxx', mode='rank'):
+    ls = LinkSaver()
+    ls.lazy_init(url=url, mode=mode)
+    with db.app.app_context():
+        ls.save_to_database()

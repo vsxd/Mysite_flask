@@ -38,6 +38,7 @@ def girls():
     query = FunPic.query
     if form.validate_on_submit():
         ls = LinkSaver()
+        ls.lazy_init()
         ls.save_to_database()
         redirect(url_for('.girls'))
     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
