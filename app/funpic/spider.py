@@ -10,10 +10,7 @@ import requests
 import threading
 from ..models import FunPic
 from .. import db
-<<<<<<< HEAD
-=======
 from sqlalchemy.exc import IntegrityError
->>>>>>> funpic
 
 
 class Tools:
@@ -192,8 +189,6 @@ class Downloader:
 
 
 class LinkSaver:
-<<<<<<< HEAD
-=======
     def __init__(self):
         self.downloader = None
         self.url_list = []
@@ -226,4 +221,3 @@ def linksave_scheduler(url='http://jandan.net/ooxx', mode='rank'):
     ls.lazy_init(url=url, mode=mode)
     with db.app.app_context():
         ls.save_to_database()
->>>>>>> funpic
