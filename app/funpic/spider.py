@@ -121,7 +121,7 @@ class Spider:
 
 class Downloader:
 
-    def __init__(self, spider=Spider(), max_threads=10, mode='rank'):
+    def __init__(self, spider, max_threads=10, mode='rank'):
         self.index_list = []
         self.url_list = spider.links
         self._soup_list = spider.soup_list
@@ -184,20 +184,14 @@ class Downloader:
                 unlike_scores.append(int(unlike))
             for index in map(like_scores.index, like_scores):
                 # 选取oo大于xx三倍 且 xx小于25的图片
-                if (like_scores[index] > unlike_scores[index] * 3) and (unlike_scores[index] < 25):
+                if (like_scores[index] > unlike_scores[index] * 4) and (unlike_scores[index] < 25):
                     self.index_list.append(index)
 
 
 class LinkSaver:
-    def __init__(self):
-        self.downloader = None
-        self.url_list = []
-        self.index_list = []
-
-    def lazy_init(self, url='http://jandan.net/ooxx', mode='rank'):
-        self.downloader = Downloader(spider=Spider(url=url), mode=mode)
-        self.url_list = self.downloader.url_list
-        self.index_list = self.downloader.index_list
+    def __init__(self, downloader):
+        self.url_list = downloader.url_list
+        self.index_list = downloader.index_list
 
     def save_to_database(self):
         for url in self.url_list:
@@ -217,7 +211,8 @@ class LinkSaver:
 
 
 def linksave_scheduler(url='http://jandan.net/ooxx', mode='rank'):
-    ls = LinkSaver()
-    ls.lazy_init(url=url, mode=mode)
+    spider = Spider(url=url)
+    downloader = Downloader(spider, mode=mode)
+    ls = LinkSaver(downloader)
     with db.app.app_context():
         ls.save_to_database()

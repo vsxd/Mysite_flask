@@ -5,7 +5,7 @@ from . import funpic
 from .. import db
 from .forms import Funpic
 from ..decorators import admin_required
-from .spider import LinkSaver
+from .spider import LinkSaver, Downloader, Spider
 
 
 @funpic.route('/disable/<id>')
@@ -35,10 +35,11 @@ def download_enable(id):
 @funpic.route('/girls', methods=['GET', 'POST'])
 def girls():
     form = Funpic()
-    query = FunPic.query
+    query = FunPic.query.filter_by(info='good')
     if form.validate_on_submit():
-        ls = LinkSaver()
-        ls.lazy_init()
+        spider = Spider()
+        downloader = Downloader(spider)
+        ls = LinkSaver(downloader)
         ls.save_to_database()
         redirect(url_for('.girls'))
     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
