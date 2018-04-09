@@ -184,7 +184,7 @@ class Downloader:
                 unlike_scores.append(int(unlike))
             for index in map(like_scores.index, like_scores):
                 # 选取oo大于xx三倍 且 xx小于25的图片
-                if (like_scores[index] > unlike_scores[index] * 3) and (unlike_scores[index] < 25):
+                if (like_scores[index] > unlike_scores[index] * 4) and (unlike_scores[index] < 25):
                     self.index_list.append(index)
 
 

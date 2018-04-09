@@ -35,7 +35,7 @@ def download_enable(id):
 @funpic.route('/girls', methods=['GET', 'POST'])
 def girls():
     form = Funpic()
-    query = FunPic.query
+    query = FunPic.query.filter_by(info='good')
     if form.validate_on_submit():
         ls = LinkSaver()
         ls.lazy_init()
