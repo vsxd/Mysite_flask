@@ -29,16 +29,20 @@ def unconfirmed():
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    # 改进密码错误提示
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
+        if user is None:
+            flash('Email无效，用户不存在！请重试，或注册新账户。')
+        elif not user.verify_password(form.password.data):
+            flash('密码错误！请重试，或尝试重设密码。')
+        else:
             login_user(user, form.remember_me.data)
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
             return redirect(next)
-        flash('Invalid username or password.')
     return render_template('auth/login.html', form=form)
 
 
