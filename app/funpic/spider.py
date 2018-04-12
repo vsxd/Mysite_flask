@@ -69,7 +69,7 @@ class Tools:
 
 class Spider:
 
-    def __init__(self, url='http://jandan.net/ooxx', page_num=2):
+    def __init__(self, url='http://jandan.net/ooxx', page_num=3):
         self.Headers = {
             'Accept-Language': 'zh-CN,zh;q=0.9',
             'Cookie': 'nsfw-click-load=off; bad-click-load=on; gif-click-load=on',  # 关闭NSFW
@@ -193,11 +193,11 @@ class LinkSaver:
         self.url_list = downloader.url_list
         self.index_list = downloader.index_list
 
-    def save_to_database(self):
+    def save_to_database(self, type='girls'):
         for url in self.url_list:
             try:
                 pic = FunPic(piclink=url,
-                             type='girls',
+                             type=type,
                              disabled=False)
                 if self.url_list.index(url) in self.index_list:
                     pic.info = 'good'
@@ -210,9 +210,17 @@ class LinkSaver:
                 # print('repeat piclink')
 
 
-def linksave_scheduler(url='http://jandan.net/ooxx', mode='rank'):
+def girls_pic_scheduler(url='http://jandan.net/ooxx', mode='rank'):
     spider = Spider(url=url)
     downloader = Downloader(spider, mode=mode)
     ls = LinkSaver(downloader)
     with db.app.app_context():
         ls.save_to_database()
+
+
+def funny_pic_scheduler(url='http://jandan.net/pic', mode='rank'):
+    spider = Spider(url=url)
+    downloader = Downloader(spider, mode=mode)
+    ls = LinkSaver(downloader)
+    with db.app.app_context():
+        ls.save_to_database(type='funny')

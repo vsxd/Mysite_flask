@@ -8,6 +8,8 @@ from flask_pagedown import PageDown
 from flask_apscheduler import APScheduler
 from config import config
 
+# from app.funpic.spider import girls_pic_scheduler, funny_pic_scheduler
+
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()

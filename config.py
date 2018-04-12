@@ -23,10 +23,10 @@ class Config:
     JOBS = [  # APScheduler Config
         {
             'id': 'spider_girls',
-            'func': 'app.funpic.spider:linksave_scheduler',
+            'func': 'app.funpic.spider:girls_pic_scheduler',
             'args': None,
             'trigger': 'interval',
-            'seconds': 10 * 60
+            'seconds': 1 * 60
         }
     ]
 
