@@ -30,6 +30,7 @@ def create_app(config_name):
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
+    db.app = app  # prepare for spider to call
     login_manager.init_app(app)
     pagedown.init_app(app)
     scheduler.init_app(app)
