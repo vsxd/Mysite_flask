@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import requests
 import threading
 from ..models import FunPic
-from .. import db
+from .. import db, scheduler
 from sqlalchemy.exc import IntegrityError
 
 
@@ -214,7 +214,7 @@ def girls_pic_scheduler(url='http://jandan.net/ooxx', mode='rank'):
     spider = Spider(url=url)
     downloader = Downloader(spider, mode=mode)
     ls = LinkSaver(downloader)
-    with db.app.app_context():
+    with scheduler.app.app_context():
         ls.save_to_database()
 
 
@@ -222,5 +222,5 @@ def funny_pic_scheduler(url='http://jandan.net/pic', mode='rank'):
     spider = Spider(url=url)
     downloader = Downloader(spider, mode=mode)
     ls = LinkSaver(downloader)
-    with db.app.app_context():
+    with scheduler.app.app_context():
         ls.save_to_database(type='funny')
