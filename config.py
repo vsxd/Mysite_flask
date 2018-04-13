@@ -26,6 +26,13 @@ class Config:
             'func': 'app.funpic.spider:girls_pic_scheduler',
             'args': None,
             'trigger': 'interval',
+            'seconds': 5 * 60
+        },
+        {
+            'id': 'spider_funny',
+            'func': 'app.funpic.spider:funny_pic_scheduler',
+            'args': None,
+            'trigger': 'interval',
             'seconds': 1 * 60
         }
     ]

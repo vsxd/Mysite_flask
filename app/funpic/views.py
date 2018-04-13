@@ -5,7 +5,7 @@ from . import funpic
 from .. import db
 from .forms import Funpic
 from ..decorators import admin_required
-from .spider import LinkSaver, Downloader, Spider, girls_pic_scheduler
+from .spider import LinkSaver, Downloader, Spider
 
 
 @funpic.route('/disable/<id>')
@@ -35,13 +35,12 @@ def download_enable(id):
 @funpic.route('/girls', methods=['GET', 'POST'])
 def girls():
     form = Funpic()
-    query = FunPic.query.filter_by(info='good')
+    query = FunPic.query.filter_by(info='good').filter_by(type='girls')
     if form.validate_on_submit():
-        girls_pic_scheduler()
-        # spider = Spider()
-        # downloader = Downloader(spider)
-        # ls = LinkSaver(downloader)
-        # ls.save_to_database()
+        spider = Spider()
+        downloader = Downloader(spider)
+        ls = LinkSaver(downloader)
+        ls.save_to_database()
         redirect(url_for('.girls'))
     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
     links = pagination.items
@@ -54,10 +53,18 @@ def girls():
 
 @funpic.route('/funny')
 def funny():
-    query = FunPic.query
+    form = Funpic()
+    query = FunPic.query.filter_by(info='good').filter_by(type='funny')
+    if form.validate_on_submit():
+        spider = Spider(url='http://jandan.net/pic')
+        downloader = Downloader(spider, mode='rank')
+        ls = LinkSaver(downloader)
+        ls.save_to_database(type='funny')
+        redirect(url_for('.girls'))
     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
     links = pagination.items
     return render_template('funpic/funpic.html',
+                           form=form,
                            links=links,
-                           girls=False,
+                           girls=True,
                            pagination=pagination)

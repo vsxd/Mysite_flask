@@ -215,7 +215,7 @@ def girls_pic_scheduler(url='http://jandan.net/ooxx', mode='rank'):
     downloader = Downloader(spider, mode=mode)
     ls = LinkSaver(downloader)
     with scheduler.app.app_context():
-        ls.save_to_database()
+        ls.save_to_database(type='girls')
 
 
 def funny_pic_scheduler(url='http://jandan.net/pic', mode='rank'):
