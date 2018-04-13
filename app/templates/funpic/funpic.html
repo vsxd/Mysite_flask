@@ -13,10 +13,10 @@
     {% endif %}
 <div class="funpic-tabs">
     <ul class="nav nav-tabs">
+        <li{% if funny %} class="active"{% endif %}><a href="{{ url_for('.funny') }}">Funny</a></li>
 {#        {% if current_user.is_authenticated %} 暂不进行权限管理#}
         <li{% if girls %} class="active"{% endif %}><a href="{{ url_for('.girls') }}">Girls</a></li>
 {#        {% endif %}#}
-        <li{% if funny %} class="active"{% endif %}><a href="{{ url_for('.girls') }}">Funny</a></li>
     </ul>
     {% for link in links %}
         <p></p>

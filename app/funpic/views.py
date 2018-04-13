@@ -66,5 +66,5 @@ def funny():
     return render_template('funpic/funpic.html',
                            form=form,
                            links=links,
-                           girls=True,
+                           girls=False,
                            pagination=pagination)
