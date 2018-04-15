@@ -64,21 +64,6 @@ def show_girls():
     resp = make_response(redirect(url_for('.index')))
     resp.set_cookie('show_girls', '1', max_age=30*24*60*60)
     return resp
-    # form = Funpic()
-    # query = FunPic.query.filter_by(info='good').filter_by(type='girls')
-    # if form.validate_on_submit():
-    #     spider = Spider()
-    #     downloader = Downloader(spider)
-    #     ls = LinkSaver(downloader)
-    #     ls.save_to_database()
-    #     redirect(url_for('.girls'))
-    # pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
-    # links = pagination.items
-    # return render_template('funpic/funpic.html',
-    #                        form=form,
-    #                        links=links,
-    #                        girls=True,
-    #                        pagination=pagination)
 
 
 @funpic.route('/funny')
