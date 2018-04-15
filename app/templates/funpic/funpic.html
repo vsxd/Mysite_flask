@@ -12,10 +12,10 @@
     <div>{{ wtf.quick_form(form) }}</div>
     {% endif %}
 <div class="funpic-tabs">
-    <ul class="nav nav-tabs">
-        <li{% if funny %} class="active"{% endif %}><a href="{{ url_for('.funny') }}">Funny</a></li>
+    <ul class="nav nav-tabs-justified">
+        <li{% if not show_girls %} class="active"{% endif %}><a href="{{ url_for('.show_funny') }}">Funny</a></li>
 {#        {% if current_user.is_authenticated %} 暂不进行权限管理#}
-        <li{% if girls %} class="active"{% endif %}><a href="{{ url_for('.girls') }}">Girls</a></li>
+        <li{% if show_girls %} class="active"{% endif %}><a href="{{ url_for('.show_girls') }}">Girls</a></li>
 {#        {% endif %}#}
     </ul>
     {% for link in links %}
@@ -29,7 +29,7 @@
 
 {% if pagination %}
 <div class="pagination">
-    {{ macros.pagination_widget(pagination, '.girls')}}
+    {{ macros.pagination_widget(pagination, '.index')}}
 </div>
 {% endif %}
 {% endblock %}
