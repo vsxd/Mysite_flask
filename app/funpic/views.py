@@ -5,7 +5,7 @@ from . import funpic
 from .. import db
 from .forms import Funpic
 from ..decorators import admin_required
-from .spider import LinkSaver, Downloader, Spider
+from .spider import LinkSaver, Downloader, Spider, funny_pic_scheduler, girls_pic_scheduler
 
 
 @funpic.route('/disable/<id>')
@@ -35,6 +35,10 @@ def pic_enable(id):
 @funpic.route('/', methods=['GET', 'POST'])
 def index():
     form = Funpic()
+    if form.validate_on_submit():
+        girls_pic_scheduler()
+        funny_pic_scheduler()
+        redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     show_girl = bool(request.cookies.get('show_girls', ''))
     if show_girl:
@@ -66,20 +70,20 @@ def show_girls():
     return resp
 
 
-@funpic.route('/funny')
-def funny():
-    form = Funpic()
-    query = FunPic.query.filter_by(info='good').filter_by(type='funny')
-    if form.validate_on_submit():
-        spider = Spider(url='http://jandan.net/pic')
-        downloader = Downloader(spider, mode='rank')
-        ls = LinkSaver(downloader)
-        ls.save_to_database(type='funny')
-        redirect(url_for('.girls'))
-    pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
-    links = pagination.items
-    return render_template('funpic/funpic.html',
-                           form=form,
-                           links=links,
-                           girls=False,
-                           pagination=pagination)
+# @funpic.route('/funny')
+# def funny():
+#     form = Funpic()
+#     query = FunPic.query.filter_by(info='good').filter_by(type='funny')
+#     if form.validate_on_submit():
+#         spider = Spider(url='http://jandan.net/pic')
+#         downloader = Downloader(spider, mode='rank')
+#         ls = LinkSaver(downloader)
+#         ls.save_to_database(type='funny')
+#         redirect(url_for('.girls'))
+#     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
+#     links = pagination.items
+#     return render_template('funpic/funpic.html',
+#                            form=form,
+#                            links=links,
+#                            girls=False,
+#                            pagination=pagination)

@@ -14,7 +14,7 @@
 <div class="funpic-tabs">
     <ul class="nav nav-tabs-justified">
         <li{% if not show_girls %} class="active"{% endif %}><a href="{{ url_for('.show_funny') }}">Funny</a></li>
-{#        {% if current_user.is_authenticated %} 暂不进行权限管理#}
+{#        {% if current_user.is_authenticated %}#}
         <li{% if show_girls %} class="active"{% endif %}><a href="{{ url_for('.show_girls') }}">Girls</a></li>
 {#        {% endif %}#}
     </ul>
