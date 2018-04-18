@@ -1,11 +1,11 @@
-from flask import render_template, abort, redirect, request, url_for, flash, send_from_directory, make_response
+from flask import render_template, redirect, request, url_for, flash, make_response
 from ..models import FunPic
 from flask_login import login_required, current_user
 from . import funpic
 from .. import db
 from .forms import Funpic
 from ..decorators import admin_required
-from .spider import LinkSaver, Downloader, Spider, funny_pic_scheduler, girls_pic_scheduler
+from .spider import funny_pic_scheduler, girls_pic_scheduler
 
 
 @funpic.route('/disable/<id>')
@@ -68,22 +68,3 @@ def show_girls():
     resp = make_response(redirect(url_for('.index')))
     resp.set_cookie('show_girls', '1', max_age=30*24*60*60)
     return resp
-
-
-# @funpic.route('/funny')
-# def funny():
-#     form = Funpic()
-#     query = FunPic.query.filter_by(info='good').filter_by(type='funny')
-#     if form.validate_on_submit():
-#         spider = Spider(url='http://jandan.net/pic')
-#         downloader = Downloader(spider, mode='rank')
-#         ls = LinkSaver(downloader)
-#         ls.save_to_database(type='funny')
-#         redirect(url_for('.girls'))
-#     pagination = query.order_by(FunPic.timestamp.desc()).paginate(per_page=5)
-#     links = pagination.items
-#     return render_template('funpic/funpic.html',
-#                            form=form,
-#                            links=links,
-#                            girls=False,
-#                            pagination=pagination)
