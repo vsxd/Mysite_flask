@@ -49,7 +49,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('您现在已        经退出登录')
+    flash('您现在已经退出登录')
     return redirect(url_for('main.index'))
 
 

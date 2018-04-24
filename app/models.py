@@ -39,7 +39,7 @@ class Updown(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     uploader = db.Column(db.Integer, db.ForeignKey('users.id'))
     note = db.Column(db.String(128))
-    disabled = db.Column(db.Boolean)
+    disabled = db.Column(db.Boolean, default=False)
 
     @staticmethod
     def filename_hash(filename):

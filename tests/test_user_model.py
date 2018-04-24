@@ -2,7 +2,7 @@ import unittest
 import time
 from datetime import datetime
 from app import create_app, db
-from app.models import User, AnonymousUser, Role, Permission, Follow
+from app.models import User, AnonymousUser, Role, Permission, Follow, Updown
 
 
 class UserModelTestCase(unittest.TestCase):
@@ -217,3 +217,13 @@ class UserModelTestCase(unittest.TestCase):
                          'posts_url', 'followed_posts_url', 'post_count']
         self.assertEqual(sorted(json_user.keys()), sorted(expected_keys))
         self.assertEqual('/api/v1/users/' + str(u.id), json_user['url'])
+
+    def test_updown(self):
+        u_1 = User(email='john@example.com', password='cat')
+        db.session.add(u_1)
+        db.session.commit()
+        updown = Updown(filename='filename', extension='.ext', uploader=u_1.id, note='note')
+        db.session.add(updown)
+        db.session.commit()
+        self.assertFalse(updown.disabled)
+        self.assertEqual(u_1.email, updown.uploader_user.email)
