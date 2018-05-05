@@ -27,6 +27,15 @@ class FunPic(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     disabled = db.Column(db.Boolean, default=False)
 
+    def to_json(self):
+        json_user = {
+            'piclink': self.piclink,
+            'info': self.info,
+            'type': self.type,
+            'timestamp': self.timestamp
+        }
+        return json_user
+
     def __repr__(self):
         return '<FunPic %r>' % self.piclink
 

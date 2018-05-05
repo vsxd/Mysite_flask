@@ -6,7 +6,7 @@ from .decorators import permission_required
 from .errors import forbidden
 
 
-@api.route('/funpic/')
+@api.route('/funpic/funny')
 def get_funny():
     page = request.args.get('page', 1, type=int)
     query = FunPic.query.filter_by(info='good').filter_by(type='funny')
