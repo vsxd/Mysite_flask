@@ -16,3 +16,4 @@ My Personal Site
 + Profile editable
 + Files upload and download
 + Built-in spider for collecting picture
++ RESTful API support
