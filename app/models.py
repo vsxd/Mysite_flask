@@ -274,12 +274,12 @@ class User(UserMixin, db.Model):
 
     def to_json(self):
         json_user = {
-            'url': url_for('api.get_user', id=self.id),
+            'url': url_for('api_v1.get_user', id=self.id),
             'username': self.username,
             'member_since': self.member_since,
             'last_seen': self.last_seen,
-            'posts_url': url_for('api.get_user_posts', id=self.id),
-            'followed_posts_url': url_for('api.get_user_followed_posts',
+            'posts_url': url_for('api_v1.get_user_posts', id=self.id),
+            'followed_posts_url': url_for('api_v1.get_user_followed_posts',
                                           id=self.id),
             'post_count': self.posts.count()
         }
@@ -338,12 +338,12 @@ class Post(db.Model):
 
     def to_json(self):
         json_post = {
-            'url': url_for('api.get_post', id=self.id),
+            'url': url_for('api_v1.get_post', id=self.id),
             'body': self.body,
             'body_html': self.body_html,
             'timestamp': self.timestamp,
-            'author_url': url_for('api.get_user', id=self.author_id),
-            'comments_url': url_for('api.get_post_comments', id=self.id),
+            'author_url': url_for('api_v1.get_user', id=self.author_id),
+            'comments_url': url_for('api_v1.get_post_comments', id=self.id),
             'comment_count': self.comments.count()
         }
         return json_post
@@ -379,12 +379,12 @@ class Comment(db.Model):
 
     def to_json(self):
         json_comment = {
-            'url': url_for('api.get_comment', id=self.id),
-            'post_url': url_for('api.get_post', id=self.post_id),
+            'url': url_for('api_v1.get_comment', id=self.id),
+            'post_url': url_for('api_v1.get_post', id=self.post_id),
             'body': self.body,
             'body_html': self.body_html,
             'timestamp': self.timestamp,
-            'author_url': url_for('api.get_user', id=self.author_id),
+            'author_url': url_for('api_v1.get_user', id=self.author_id),
         }
         return json_comment
 

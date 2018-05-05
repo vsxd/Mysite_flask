@@ -16,10 +16,10 @@ def get_funny():
     pics = pagination.items
     prev = None
     if pagination.has_prev:
-        prev = url_for('api.get_posts', page=page-1)
+        prev = url_for('api_v1.get_posts', page=page-1)
     next = None
     if pagination.has_next:
-        next = url_for('api.get_posts', page=page+1)
+        next = url_for('api_v1.get_posts', page=page+1)
     return jsonify({
         'posts': [pic.to_json() for pic in pics],
         'prev': prev,

@@ -37,7 +37,7 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(json_response['error'], 'not found')
 
     def test_no_auth(self):
-        response = self.client.get('/api/v1/posts/',
+        response = self.client.get('/api_v1/v1/posts/',
                                    content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -52,7 +52,7 @@ class APITestCase(unittest.TestCase):
 
         # authenticate with bad password
         response = self.client.get(
-            '/api/v1/posts/',
+            '/api_v1/v1/posts/',
             headers=self.get_api_headers('john@example.com', 'dog'))
         self.assertEqual(response.status_code, 401)
 
@@ -67,13 +67,13 @@ class APITestCase(unittest.TestCase):
 
         # issue a request with a bad token
         response = self.client.get(
-            '/api/v1/posts/',
+            '/api_v1/v1/posts/',
             headers=self.get_api_headers('bad-token', ''))
         self.assertEqual(response.status_code, 401)
 
         # get a token
         response = self.client.post(
-            '/api/v1/tokens/',
+            '/api_v1/v1/tokens/',
             headers=self.get_api_headers('john@example.com', 'cat'))
         self.assertEqual(response.status_code, 200)
         json_response = json.loads(response.get_data(as_text=True))
@@ -82,13 +82,13 @@ class APITestCase(unittest.TestCase):
 
         # issue a request with the token
         response = self.client.get(
-            '/api/v1/posts/',
+            '/api_v1/v1/posts/',
             headers=self.get_api_headers(token, ''))
         self.assertEqual(response.status_code, 200)
 
     def test_anonymous(self):
         response = self.client.get(
-            '/api/v1/posts/',
+            '/api_v1/v1/posts/',
             headers=self.get_api_headers('', ''))
         self.assertEqual(response.status_code, 401)
 
@@ -103,7 +103,7 @@ class APITestCase(unittest.TestCase):
 
         # get list of posts with the unconfirmed account
         response = self.client.get(
-            '/api/v1/posts/',
+            '/api_v1/v1/posts/',
             headers=self.get_api_headers('john@example.com', 'cat'))
         self.assertEqual(response.status_code, 403)
 
@@ -118,14 +118,14 @@ class APITestCase(unittest.TestCase):
 
         # write an empty post
         response = self.client.post(
-            '/api/v1/posts/',
+            '/api_v1/v1/posts/',
             headers=self.get_api_headers('john@example.com', 'cat'),
             data=json.dumps({'body': ''}))
         self.assertEqual(response.status_code, 400)
 
         # write a post
         response = self.client.post(
-            '/api/v1/posts/',
+            '/api_v1/v1/posts/',
             headers=self.get_api_headers('john@example.com', 'cat'),
             data=json.dumps({'body': 'body of the *blog* post'}))
         self.assertEqual(response.status_code, 201)
@@ -146,7 +146,7 @@ class APITestCase(unittest.TestCase):
 
         # get the post from the user
         response = self.client.get(
-            '/api/v1/users/{}/posts/'.format(u.id),
+            '/api_v1/v1/users/{}/posts/'.format(u.id),
             headers=self.get_api_headers('john@example.com', 'cat'))
         self.assertEqual(response.status_code, 200)
         json_response = json.loads(response.get_data(as_text=True))
@@ -156,7 +156,7 @@ class APITestCase(unittest.TestCase):
 
         # get the post from the user as a follower
         response = self.client.get(
-            '/api/v1/users/{}/timeline/'.format(u.id),
+            '/api_v1/v1/users/{}/timeline/'.format(u.id),
             headers=self.get_api_headers('john@example.com', 'cat'))
         self.assertEqual(response.status_code, 200)
         json_response = json.loads(response.get_data(as_text=True))
@@ -188,13 +188,13 @@ class APITestCase(unittest.TestCase):
 
         # get users
         response = self.client.get(
-            '/api/v1/users/{}'.format(u1.id),
+            '/api_v1/v1/users/{}'.format(u1.id),
             headers=self.get_api_headers('susan@example.com', 'dog'))
         self.assertEqual(response.status_code, 200)
         json_response = json.loads(response.get_data(as_text=True))
         self.assertEqual(json_response['username'], 'john')
         response = self.client.get(
-            '/api/v1/users/{}'.format(u2.id),
+            '/api_v1/v1/users/{}'.format(u2.id),
             headers=self.get_api_headers('susan@example.com', 'dog'))
         self.assertEqual(response.status_code, 200)
         json_response = json.loads(response.get_data(as_text=True))
@@ -218,7 +218,7 @@ class APITestCase(unittest.TestCase):
 
         # write a comment
         response = self.client.post(
-            '/api/v1/posts/{}/comments/'.format(post.id),
+            '/api_v1/v1/posts/{}/comments/'.format(post.id),
             headers=self.get_api_headers('susan@example.com', 'dog'),
             data=json.dumps({'body': 'Good [post](http://example.com)!'}))
         self.assertEqual(response.status_code, 201)
@@ -247,7 +247,7 @@ class APITestCase(unittest.TestCase):
 
         # get the two comments from the post
         response = self.client.get(
-            '/api/v1/posts/{}/comments/'.format(post.id),
+            '/api_v1/v1/posts/{}/comments/'.format(post.id),
             headers=self.get_api_headers('susan@example.com', 'dog'))
         self.assertEqual(response.status_code, 200)
         json_response = json.loads(response.get_data(as_text=True))
@@ -256,7 +256,7 @@ class APITestCase(unittest.TestCase):
 
         # get all the comments
         response = self.client.get(
-            '/api/v1/posts/{}/comments/'.format(post.id),
+            '/api_v1/v1/posts/{}/comments/'.format(post.id),
             headers=self.get_api_headers('susan@example.com', 'dog'))
         self.assertEqual(response.status_code, 200)
         json_response = json.loads(response.get_data(as_text=True))

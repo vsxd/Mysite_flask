@@ -216,7 +216,7 @@ class UserModelTestCase(unittest.TestCase):
         expected_keys = ['url', 'username', 'member_since', 'last_seen',
                          'posts_url', 'followed_posts_url', 'post_count']
         self.assertEqual(sorted(json_user.keys()), sorted(expected_keys))
-        self.assertEqual('/api/v1/users/' + str(u.id), json_user['url'])
+        self.assertEqual('/api_v1/v1/users/' + str(u.id), json_user['url'])
 
     def test_updown(self):
         u_1 = User(email='john@example.com', password='cat')

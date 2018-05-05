@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_bootstrap import Bootstrap, WebCDN
+from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -50,7 +50,7 @@ def create_app(config_name):
     from .funpic import funpic as funpic_blueprint
     app.register_blueprint(funpic_blueprint, url_prefix='/funpic')
 
-    from .api import api as api_blueprint
+    from .api_v1 import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api/v1')
 
     return app
