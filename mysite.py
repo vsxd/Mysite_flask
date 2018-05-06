@@ -1,7 +1,7 @@
 import os
 
 COV = None
-if os.environ.get('FLASK_COVERAGE'):
+if os.environ.get('TSET_COVERAGE'):
     import coverage
     COV = coverage.coverage(branch=True, include='app/*')
     COV.start()
@@ -27,9 +27,9 @@ def make_shell_context():
               help='Run tests under code coverage.')
 def test(coverage):
     """Run the unit tests."""
-    if coverage and not os.environ.get('FLASK_COVERAGE'):
+    if coverage and not os.environ.get('TEST_COVERAGE'):
         import subprocess
-        os.environ['FLASK_COVERAGE'] = '1'
+        os.environ['TEST_COVERAGE'] = '1'
         sys.exit(subprocess.call(sys.argv))
 
     import unittest

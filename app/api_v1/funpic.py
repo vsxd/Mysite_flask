@@ -11,7 +11,7 @@ def get_funny():
     page = request.args.get('page', 1, type=int)
     query = FunPic.query.filter_by(info='good').filter_by(type='funny')
     pagination = query.paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        page, per_page=current_app.config['PIC_PER_PAGE'],
         error_out=False)
     pics = pagination.items
     prev = None

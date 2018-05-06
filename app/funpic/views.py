@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, url_for, flash, make_response
+from flask import render_template, redirect, request, url_for, flash, make_response, current_app
 from ..models import FunPic
 from flask_login import login_required, current_user
 from . import funpic
@@ -46,7 +46,7 @@ def index():
     else:
         query = FunPic.query.filter_by(info='good').filter_by(type='funny')
     pagination = query.order_by(FunPic.timestamp.desc()).paginate(
-        page, per_page=5,
+        page, per_page=current_app.config['PIC_PER_PAGE'],
         error_out=False)
     links = pagination.items
     return render_template('funpic/funpic.html',
