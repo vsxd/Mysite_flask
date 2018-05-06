@@ -1,9 +1,6 @@
-from flask import jsonify, request, g, url_for, current_app
-from .. import db
-from ..models import FunPic, Permission
+from flask import jsonify, request, url_for, current_app
+from ..models import FunPic
 from . import api
-from .decorators import permission_required
-from .errors import forbidden
 
 
 @api.route('/funpic/funny')

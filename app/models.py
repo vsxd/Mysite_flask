@@ -54,6 +54,16 @@ class Updown(db.Model):
     def filename_hash(filename):
         return hashlib.md5(filename.lower().encode('utf-8')).hexdigest()
 
+    def to_json(self):
+        json_user = {
+            'filename': self.filename,
+            'extension': self.extension,
+            'timestamp': self.timestamp,
+            'uploader': url_for('api_v1.get_user', id=self.uploader),
+            'note': self.note
+        }
+        return json_user
+
     def __repr__(self):
         return '<Updown %r>' % self.filename
 
