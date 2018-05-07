@@ -6,7 +6,7 @@ from . import api
 @api.route('/updown/list')
 def get_list():
     page = request.args.get('page', 1, type=int)
-    query = Updown.query
+    query = Updown.query.filter(Updown.disabled == False)
     # 显示服务器上的文件
     pagination = query.order_by(Updown.timestamp.desc()).paginate(per_page=20)
     files = pagination.items

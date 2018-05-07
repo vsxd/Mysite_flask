@@ -55,7 +55,11 @@ class Updown(db.Model):
         return hashlib.md5(filename.lower().encode('utf-8')).hexdigest()
 
     def to_json(self):
+
         json_user = {
+            'download_link': url_for('updown.download',
+                                     filename=self.filename+'.'+self.extension,
+                                     _external=True),
             'filename': self.filename,
             'extension': self.extension,
             'timestamp': self.timestamp,

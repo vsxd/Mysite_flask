@@ -35,11 +35,11 @@ def download_enable(id):
 
 @updown.route('/download/<filename>')
 def download(filename):
-    if os.path.isfile(os.path.join('app/static/download/', filename)):
+    if os.path.isfile(os.path.join('app/updown/download/', filename)):
         # 此处有个坑 os.path是以项目根目录搜索
         # 而flask的send_from_directory方法是从app根目录开始搜索
         flash('开始下载：' + filename, category='info')
-        return send_from_directory('static/download/', filename, as_attachment=True)
+        return send_from_directory('updown/download/', filename, as_attachment=True)
     else:
         flash('抱歉，文件没有在服务器上找到', category='error')
         return abort(404)
@@ -64,7 +64,7 @@ def updown():
                         uploader=current_user.id,
                         note=form.note.data)
         try:
-            file.save('app/static/download/' + filename + '.' + extension)
+            file.save('app/updown/download/' + filename + '.' + extension)
             # request对象中的file对象的save方法同样从项目根目录开始寻找目录
             flash('上传成功', category='message')
             db.session.add(upload)
