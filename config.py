@@ -13,6 +13,8 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_SUBJECT_PREFIX = '[Xudong]'
     MAIL_SENDER = 'xudong714@foxmail.com'
+
+    BOOTSTRAP_SERVE_LOCAL = True
     SITE_ADMIN = os.environ.get('SITE_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
