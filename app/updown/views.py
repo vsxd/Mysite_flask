@@ -69,6 +69,8 @@ def updown():
             flash('上传成功', category='message')
             db.session.add(upload)
             db.session.commit()
+        except FileExistsError as e:
+            flash('同名文件已存在，上传失败', category='error')
         except Exception as e:
             flash('上传失败', category='error')
         return redirect(url_for('.updown'))
