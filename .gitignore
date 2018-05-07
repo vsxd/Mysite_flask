@@ -1,7 +1,7 @@
 # my
 .idea/
 .directory
-app/static/download
+app/updown/download
 data-dev.sqlite
 
 # Byte-compiled / optimized / DLL files
