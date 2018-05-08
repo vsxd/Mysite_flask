@@ -61,3 +61,9 @@ class FlaskClientTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('您现在已经退出登录' in response.get_data(
             as_text=True))
+
+    def test_funpic_page(self):
+        pass
+
+    def test_updown_page(self):
+        pass

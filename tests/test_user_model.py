@@ -227,3 +227,6 @@ class UserModelTestCase(unittest.TestCase):
         db.session.commit()
         self.assertFalse(updown.disabled)
         self.assertEqual(u_1.email, updown.uploader_user.email)
+
+    def test_funpic(self):
+        pass
