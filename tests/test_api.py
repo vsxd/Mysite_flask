@@ -262,3 +262,9 @@ class APITestCase(unittest.TestCase):
         json_response = json.loads(response.get_data(as_text=True))
         self.assertIsNotNone(json_response.get('comments'))
         self.assertEqual(json_response.get('count', 0), 2)
+
+    def test_funpic(self):
+        pass
+
+    def test_updown(self):
+        pass
