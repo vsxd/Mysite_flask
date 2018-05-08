@@ -57,7 +57,7 @@ class Updown(db.Model):
     def to_json(self):
 
         json_user = {
-            'download_link': url_for('updown.download',
+            'download_link': url_for('api_v1.download',
                                      filename=self.filename+'.'+self.extension,
                                      _external=True),
             'filename': self.filename,

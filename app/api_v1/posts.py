@@ -1,12 +1,12 @@
 from flask import jsonify, request, g, url_for, current_app
 from .. import db
 from ..models import Post, Permission
-from . import api
+from . import api_v1
 from .decorators import permission_required
 from .errors import forbidden
 
 
-@api.route('/posts/')
+@api_v1.route('/posts/')
 def get_posts():
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.paginate(
@@ -27,13 +27,13 @@ def get_posts():
     })
 
 
-@api.route('/posts/<int:id>')
+@api_v1.route('/posts/<int:id>')
 def get_post(id):
     post = Post.query.get_or_404(id)
     return jsonify(post.to_json())
 
 
-@api.route('/posts/', methods=['POST'])
+@api_v1.route('/posts/', methods=['POST'])
 @permission_required(Permission.WRITE)
 def new_post():
     post = Post.from_json(request.json)
@@ -44,7 +44,7 @@ def new_post():
         {'Location': url_for('api_v1.get_post', id=post.id)}
 
 
-@api.route('/posts/<int:id>', methods=['PUT'])
+@api_v1.route('/posts/<int:id>', methods=['PUT'])
 @permission_required(Permission.WRITE)
 def edit_post(id):
     post = Post.query.get_or_404(id)

@@ -1,9 +1,9 @@
 from flask import jsonify, request, url_for, current_app
 from ..models import FunPic
-from . import api
+from . import api_v1
 
 
-@api.route('/funpic/funny')
+@api_v1.route('/funpic/funny')
 def get_funny():
     page = request.args.get('page', 1, type=int)
     query = FunPic.query.filter_by(info='good').filter_by(type='funny')
@@ -25,7 +25,7 @@ def get_funny():
     })
 
 
-@api.route('/funpic/girls')
+@api_v1.route('/funpic/girls')
 def get_girls():
     page = request.args.get('page', 1, type=int)
     query = FunPic.query.filter_by(info='good').filter_by(type='girls')

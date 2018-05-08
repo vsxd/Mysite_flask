@@ -50,7 +50,7 @@ def create_app(config_name):
     from .funpic import funpic as funpic_blueprint
     app.register_blueprint(funpic_blueprint, url_prefix='/funpic')
 
-    from .api_v1 import api as api_blueprint
+    from .api_v1 import api_v1 as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api/v1')
 
     return app
