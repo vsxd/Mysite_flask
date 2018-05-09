@@ -3,7 +3,7 @@ import json
 import re
 from base64 import b64encode
 from app import create_app, db
-from app.models import User, Role, Post, Comment
+from app.models import User, Role, Post, Comment, FunPic, Updown
 
 
 class APITestCase(unittest.TestCase):
@@ -264,7 +264,40 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(json_response.get('count', 0), 2)
 
     def test_funpic(self):
-        pass
+        # add a users
+        r = Role.query.filter_by(name='User').first()
+        self.assertIsNotNone(r)
+        u2 = User(email='susan@example.com', username='susan',
+                  password='dog', confirmed=True, role=r)
+        db.session.add_all([u2])
+        db.session.commit()
+
+        # add two funpic
+        p1 = FunPic(piclink='link.to.pic', info='good', type='girls',
+                    disabled=False)
+        p2 = FunPic(piclink='link.to.pic2', info='not good', type='funny',
+                    disabled=True)
+        db.session.add_all([p1, p2])
+        db.session.commit()
+
+        # test girls
+        response = self.client.get(
+            '/api/v1/funpic/girls',
+            headers=self.get_api_headers('susan@example.com', 'dog'))
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.get_data(as_text=True))
+        pics = json_response.get('pics')
+        self.assertIsNotNone(pics)
+
+        # test not good
+        response = self.client.get(
+            '/api/v1/funpic/funny',
+            headers=self.get_api_headers('susan@example.com', 'dog'))
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.get_data(as_text=True))
+        self.assertEqual(json_response.get('count'), 0)
+        pics = json_response.get('pics')
+        self.assertEqual(pics, [])
 
     def test_updown(self):
         pass
