@@ -141,7 +141,7 @@ class APITestCase(unittest.TestCase):
         self.assertEqual('http://localhost' + json_response['url'], url)
         self.assertEqual(json_response['body'], 'body of the *blog* post')
         self.assertEqual(json_response['body_html'],
-                        '<p>body of the <em>blog</em> post</p>')
+                         '<p>body of the <em>blog</em> post</p>')
         json_post = json_response
 
         # get the post from the user
@@ -226,7 +226,7 @@ class APITestCase(unittest.TestCase):
         url = response.headers.get('Location')
         self.assertIsNotNone(url)
         self.assertEqual(json_response['body'],
-                        'Good [post](http://example.com)!')
+                         'Good [post](http://example.com)!')
         self.assertEqual(
             re.sub('<.*?>', '', json_response['body_html']), 'Good post!')
 
@@ -238,7 +238,7 @@ class APITestCase(unittest.TestCase):
         json_response = json.loads(response.get_data(as_text=True))
         self.assertEqual('http://localhost' + json_response['url'], url)
         self.assertEqual(json_response['body'],
-                        'Good [post](http://example.com)!')
+                         'Good [post](http://example.com)!')
 
         # add another comment
         comment = Comment(body='Thank you!', author=u1, post=post)
@@ -299,6 +299,25 @@ class APITestCase(unittest.TestCase):
         pics = json_response.get('pics')
         self.assertEqual(pics, [])
 
+        # add more pic
+        pic_list = []
+        for i in range(50):
+            pic = FunPic(piclink='link.to.pic no.' + str(i), info='good', type='funny',
+                         disabled=False)
+            pic_list.append(pic)
+        db.session.add_all(pic_list)
+        db.session.commit()
+
+        # test funny pics
+        response = self.client.get(
+            '/api/v1/funpic/funny',
+            headers=self.get_api_headers('susan@example.com', 'dog'))
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.get_data(as_text=True))
+        self.assertEqual(json_response.get('count'), 50)
+        self.assertIsNotNone(json_response.get('next'))
+        self.assertIsNone(json_response.get('prev'))
+
     def test_updown(self):
         # add a users
         r = Role.query.filter_by(name='User').first()
@@ -311,8 +330,8 @@ class APITestCase(unittest.TestCase):
         # add updowns
         updowns = []
         for i in range(50):
-            updown = Updown(filename='filename'+str(i), extension='test', uploader=u2.id,
-                            note='note no.'+str(i), disabled=False)
+            updown = Updown(filename='filename' + str(i), extension='test', uploader=u2.id,
+                            note='note no.' + str(i), disabled=False)
             updowns.append(updown)
         db.session.add_all(updowns)
         db.session.commit()
@@ -334,3 +353,4 @@ class APITestCase(unittest.TestCase):
         json_response = json.loads(response.get_data(as_text=True))
         self.assertEqual(json_response.get('count'), 50)
         self.assertIsNotNone(json_response.get('next'))
+        self.assertIsNone(json_response.get('prev'))
