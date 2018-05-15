@@ -2,7 +2,7 @@ import unittest
 import time
 from datetime import datetime
 from app import create_app, db
-from app.models import User, AnonymousUser, Role, Permission, Follow, Updown
+from app.models import User, AnonymousUser, Role, Permission, Follow, Updown, FunPic
 
 
 class UserModelTestCase(unittest.TestCase):
@@ -229,4 +229,12 @@ class UserModelTestCase(unittest.TestCase):
         self.assertEqual(u_1.email, updown.uploader_user.email)
 
     def test_funpic(self):
-        pass
+        funpic = FunPic(piclink='http://piclink.com/pic.jpg', info='good',
+                        type='girls', disabled=True)
+        db.session.add(funpic)
+
+        db.session.commit()
+        self.assertTrue(funpic.disabled)
+        self.assertEqual(funpic.piclink, 'http://piclink.com/pic.jpg')
+        self.assertEqual(funpic.info, 'good')
+        self.assertEqual(funpic.type, 'girls')
