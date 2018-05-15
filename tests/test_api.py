@@ -300,4 +300,37 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(pics, [])
 
     def test_updown(self):
-        pass
+        # add a users
+        r = Role.query.filter_by(name='User').first()
+        self.assertIsNotNone(r)
+        u2 = User(email='susan@example.com', username='susan',
+                  password='dog', confirmed=True, role=r)
+        db.session.add(u2)
+        db.session.commit()
+
+        # add updowns
+        updowns = []
+        for i in range(50):
+            updown = Updown(filename='filename'+str(i), extension='test', uploader=u2.id,
+                            note='note no.'+str(i), disabled=False)
+            updowns.append(updown)
+        db.session.add_all(updowns)
+        db.session.commit()
+
+        # test updowns
+        response = self.client.get(
+            '/api/v1/updown/list',
+            headers=self.get_api_headers('susan@example.com', 'dog'))
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.get_data(as_text=True))
+        link = json_response.get('file')[0].get('download_link')
+        self.assertIsNotNone(link)
+
+        # test page
+        response = self.client.get(
+            '/api/v1/updown/list',
+            headers=self.get_api_headers('susan@example.com', 'dog'))
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.get_data(as_text=True))
+        self.assertEqual(json_response.get('count'), 50)
+        self.assertIsNotNone(json_response.get('next'))
