@@ -238,3 +238,4 @@ class UserModelTestCase(unittest.TestCase):
         self.assertEqual(funpic.piclink, 'http://piclink.com/pic.jpg')
         self.assertEqual(funpic.info, 'good')
         self.assertEqual(funpic.type, 'girls')
+        self.assertTrue('http://piclink.com/pic.jpg' in funpic.__repr__())
