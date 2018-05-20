@@ -1,3 +1,4 @@
+import hashlib
 import unittest
 import json
 import re
@@ -186,6 +187,11 @@ class APITestCase(unittest.TestCase):
         db.session.add_all([u1, u2])
         db.session.commit()
 
+        # test self follows
+        # User.add_self_follows()
+        self.assertTrue(u1.is_following(u1))
+        self.assertTrue(u2.is_following(u2))
+
         # get users
         response = self.client.get(
             '/api/v1/users/{}'.format(u1.id),
@@ -262,6 +268,24 @@ class APITestCase(unittest.TestCase):
         json_response = json.loads(response.get_data(as_text=True))
         self.assertIsNotNone(json_response.get('comments'))
         self.assertEqual(json_response.get('count', 0), 2)
+
+        # add more comments
+        list = []
+        for i in range(50):
+            comment = Comment(body='Thank you!'+str(i), author=u2, post=post)
+            list.append(comment)
+        db.session.add_all(list)
+        db.session.commit()
+        # test comments
+        response = self.client.get(
+            '/api/v1/comments',
+            headers=self.get_api_headers('susan@example.com', 'dog'))
+        self.assertEqual(response.status_code, 301)
+        # json_response = json.loads(response.get_data(as_text=True))
+        # self.assertEqual(json_response.get('count'), 50)
+        # self.assertIsNotNone(json_response.get('next'))
+        # self.assertIsNone(json_response.get('prev'))
+
 
     def test_funpic(self):
         # add a users
@@ -344,6 +368,8 @@ class APITestCase(unittest.TestCase):
         json_response = json.loads(response.get_data(as_text=True))
         link = json_response.get('file')[0].get('download_link')
         self.assertIsNotNone(link)
+        filename = hashlib.md5('filename'.lower().encode('utf-8')).hexdigest()
+        self.assertEqual(filename, Updown.filename_hash('filename'))
 
         # test page
         response = self.client.get(
