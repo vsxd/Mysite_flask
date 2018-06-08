@@ -5,6 +5,7 @@ My Personal Site
 
 ------
 
++ add one
 + Base on flask
 + Register account and log in
 + Email confirmation
