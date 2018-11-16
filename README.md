@@ -5,7 +5,7 @@ My Personal Site
 
 ------
 
-+ Base on flask
++ Based on flask
 + Register account and log in
 + Email confirmation
 + Account permissions management
